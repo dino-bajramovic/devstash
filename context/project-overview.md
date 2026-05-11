@@ -358,6 +358,12 @@ enum ContentType {
 - Syntax highlighting on all code blocks
 - **References**: Notion, Linear, Raycast
 
+### Screenshots
+
+Refer to the screenshots below as a base for the dashboard UI. It does not have to be exact, use it as reference:
+- @contect/screenshots/dashboard-ui-main.png
+- @contect/screenshots/dashboard-ui-drawer.png
+
 ### Layout
 
 ```

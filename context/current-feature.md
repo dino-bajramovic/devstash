@@ -1,25 +1,14 @@
 ## Current feature
 
-Dashboard UI Phase 1 — Foundation & Layout Shell
+None
 
 ## Status
 
-Completed
+—
 
 ## Goals
 
-- Initialize ShadCN UI and install required components
-- Create dashboard route at `/dashboard`
-- Set up main dashboard layout with global styles
-- Dark mode by default
-- Top bar with search input and "New Item" button (display only)
-- Placeholder sidebar and main area (h2 headings only)
-
 ## Notes
-
-- Reference screenshot: `context/screenshots/dashboard-ui-main.png`
-- Mock data available at `src/lib/mock-data.ts` for later phases
-- Phase 2 and Phase 3 specs exist in `context/features/`
 
 ## History
 
@@ -41,3 +30,14 @@ Completed
 - Placeholder sidebar (`h2 "Sidebar"`) and main area (`h2 "Main"`)
 - Dark mode by default via `dark` class on `<html>`
 - Switched font from Geist to Inter + JetBrains Mono to match design screenshots
+
+### 2026-05-11 — Dashboard UI Phase 2 — Sidebar
+
+- Collapsible sidebar (desktop: icon-only mode ↔ full width via `PanelLeft` toggle in sidebar header)
+- Mobile: always a slide-in overlay drawer with backdrop
+- "Navigation" header row with label left, toggle button right
+- Types section (collapsible) — all 7 item types with colored icons, counts, links to `/items/{slug}`
+- Collections section (collapsible) — FAVORITES subsection (amber star + X on hover) and ALL COLLECTIONS subsection
+- User avatar at the bottom with initials, name, email, and settings icon
+- Search input centered in the top bar; logo left, action buttons right
+- Extracted `DashboardShell` client component for state management; layout.tsx stays a server component

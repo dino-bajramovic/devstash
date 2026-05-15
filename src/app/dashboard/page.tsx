@@ -1,37 +1,37 @@
 import { Hash, Layers, Star, BookmarkCheck, Pin } from 'lucide-react'
-import { mockCollections, mockItems } from '@/lib/mock-data'
+import { auth } from '@/lib/auth'
+import { getCollectionsForDashboard, getDashboardStats } from '@/lib/db/collections'
+import { mockItems } from '@/lib/mock-data'
 import { CollectionCard } from '@/components/dashboard/CollectionCard'
 import { ItemCard } from '@/components/dashboard/ItemCard'
-
-const stats = [
-  {
-    label: 'Total Items',
-    value: mockItems.length,
-    icon: Hash,
-  },
-  {
-    label: 'Collections',
-    value: mockCollections.length,
-    icon: Layers,
-  },
-  {
-    label: 'Favorite Items',
-    value: mockItems.filter((i) => i.isFavorite).length,
-    icon: Star,
-  },
-  {
-    label: 'Favorite Collections',
-    value: mockCollections.filter((c) => c.isFavorite).length,
-    icon: BookmarkCheck,
-  },
-]
 
 const pinnedItems = mockItems.filter((i) => i.isPinned)
 const recentItems = [...mockItems]
   .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
   .slice(0, 10)
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const session = await auth()
+  let userId = session?.user?.id ?? ''
+
+  if (!userId) {
+    const { prisma } = await import('@/lib/prisma')
+    const demoUser = await prisma.user.findUnique({ where: { email: 'demo@devstash.io' }, select: { id: true } })
+    userId = demoUser?.id ?? ''
+  }
+
+  const [collections, stats] = await Promise.all([
+    getCollectionsForDashboard(userId),
+    getDashboardStats(userId),
+  ])
+
+  const statCards = [
+    { label: 'Total Items', value: stats.totalItems, icon: Hash },
+    { label: 'Collections', value: stats.totalCollections, icon: Layers },
+    { label: 'Favorite Items', value: stats.favoriteItems, icon: Star },
+    { label: 'Favorite Collections', value: stats.favoriteCollections, icon: BookmarkCheck },
+  ]
+
   return (
     <div className="p-6 space-y-8 max-w-5xl mx-auto">
       {/* Header */}
@@ -42,7 +42,7 @@ export default function DashboardPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {stats.map((stat) => {
+        {statCards.map((stat) => {
           const Icon = stat.icon
           return (
             <div key={stat.label} className="rounded-lg border border-border bg-card p-4">
@@ -67,11 +67,15 @@ export default function DashboardPage() {
             View all
           </a>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {mockCollections.map((collection) => (
-            <CollectionCard key={collection.id} collection={collection} />
-          ))}
-        </div>
+        {collections.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {collections.map((collection) => (
+              <CollectionCard key={collection.id} collection={collection} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No collections yet.</p>
+        )}
       </section>
 
       {/* Pinned Items */}

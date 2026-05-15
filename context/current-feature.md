@@ -8,25 +8,22 @@ Completed
 
 ## Goals
 
-- Override the existing `prisma/seed.ts` with full sample data per the seed spec
-- Create a demo user (`demo@devstash.io`) with a hashed password
-- Seed all 7 system `ItemType` records (snippet, prompt, command, note, file, image, link)
-- Create 5 collections with realistic items: React Patterns, AI Workflows, DevOps, Terminal Commands, Design Resources
-- All items should have appropriate tags, content, and metadata
+- Create `src/lib/db/collections.ts` with data fetching functions
+- Fetch collections directly in server component (replace mock data)
+- Collection card border color derived from most-used content type in that collection
+- Show small icons of all types present in each collection
+- Keep the current design intact
+- Update collection stats display to reflect real data
 
 ## Specs
 
-@features/seed-spec.md
+@features/dashboard-collections-spec.md
 
 ## Notes
 
-- NextAuth v5 is still in beta — use `next-auth@beta`
-- Never use `prisma db push` — always migrations
-- Keep all features unlocked during dev (isPro gating infrastructure only)
-- Hash demo user password with `bcryptjs`, 12 rounds
-- Use real URLs for link items (DevOps and Design Resources collections)
-- The seed script must be fully idempotent — safe to run multiple times (upsert or delete-then-recreate)
-- Override whatever is currently in `prisma/seed.ts` completely
+- Do not add items underneath cards yet — that comes later
+- Replace `src/lib/mock-data.ts` usage in main area only (collections section)
+- Fetch data with Prisma directly in server components — no client-side fetching
 
 ## History
 
@@ -86,3 +83,14 @@ Completed
 - 5 collections with 14 items total: React Patterns (3 snippets), AI Workflows (3 prompts), DevOps (1 snippet, 1 command, 2 links), Terminal Commands (4 commands), Design Resources (4 links)
 - All items tagged; real URLs used for link items
 - Script is fully idempotent — safe to re-run via `npm run db:seed`
+
+### 2026-05-15 — Dashboard Collections — Real Data
+
+- Created `src/lib/db/collections.ts` with `getCollectionsForDashboard` and `getDashboardStats`
+- Collections fetched from Neon DB via Prisma with nested item→itemType includes
+- Dominant type computed per collection (most-used itemType by count)
+- Collection card border color derived from dominant type color
+- Type icons in card footer rendered from distinct types present in that collection
+- All 4 stats cards (total items, collections, favorites) now pull from DB
+- Dev fallback: if no auth session, load data for `demo@devstash.io`
+- `AUTH_SECRET` generated and set in `.env`

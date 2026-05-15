@@ -1,23 +1,22 @@
 ## Current feature
 
-Dashboard UI Phase 3 — Main Area
+None — ready for next feature
 
 ## Status
 
-In Progress
+Completed
 
 ## Goals
 
-- 4 stats cards at the top (total items, collections, favorite items, favorite collections)
-- Recent collections section
-- Pinned items section
-- 10 recent items section
+## Specs
+
+@features/database-spec.md
 
 ## Notes
 
-- Reference screenshot: `context/screenshots/dashboard-ui-main.png`
-- Use mock data from `src/lib/mock-data.ts` (no database yet)
-- Stats cards are NOT in the screenshot — add them at the top of the main area
+- NextAuth v5 is still in beta — use `next-auth@beta`
+- Never use `prisma db push` — always migrations
+- Keep all features unlocked during dev (isPro gating infrastructure only)
 
 ## History
 
@@ -50,3 +49,22 @@ In Progress
 - User avatar at the bottom with initials, name, email, and settings icon
 - Search input centered in the top bar; logo left, action buttons right
 - Extracted `DashboardShell` client component for state management; layout.tsx stays a server component
+
+### 2026-05-12 — Dashboard UI Phase 3 — Main Area
+
+- 4 stats cards at the top (total items, collections, favorite items, favorite collections)
+- Collections grid with type icons, favorite star, and hover-reveal more button
+- Pinned items section with colored type icon circles, tags, and dates
+- Recent items section (up to 10, sorted by date desc)
+- All pages SSR by default; only interactive leaves (`CollectionMoreButton`) use `'use client'`
+
+### 2026-05-15 — Foundation — Prisma + Neon + NextAuth v5
+
+- Installed Prisma 7 with `@prisma/adapter-pg` and connected to Neon PostgreSQL
+- Defined full schema: User, Account, Session, VerificationToken, Item, ItemType, Collection, ItemCollection, Tag, ItemTag
+- Created and applied initial migration via `prisma migrate dev`
+- Seeded 7 system ItemTypes (Snippet, Prompt, Command, Note, Link, File, Image)
+- Installed NextAuth v5 (`next-auth@beta`) with Prisma adapter
+- Email/password + GitHub OAuth providers configured
+- `/dashboard` route protected via middleware (`auth()` from NextAuth)
+- Prisma client configured with `prisma.config.ts` and singleton in `src/lib/prisma.ts`

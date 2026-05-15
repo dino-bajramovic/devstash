@@ -68,14 +68,6 @@ Completed
 - Recent items section (up to 10, sorted by date desc)
 - All pages SSR by default; only interactive leaves (`CollectionMoreButton`) use `'use client'`
 
-### 2026-05-15 — Seed Data
-
-- Demo user `demo@devstash.io` with bcrypt-hashed password (12 rounds)
-- 7 system ItemTypes upserted (snippet, prompt, command, note, file, image, link)
-- 5 collections with 14 items total: React Patterns (3 snippets), AI Workflows (3 prompts), DevOps (1 snippet, 1 command, 2 links), Terminal Commands (4 commands), Design Resources (4 links)
-- All items tagged; real URLs used for link items
-- Script is fully idempotent — safe to re-run via `npm run db:seed`
-
 ### 2026-05-15 — Foundation — Prisma + Neon + NextAuth v5
 
 - Installed Prisma 7 with `@prisma/adapter-pg` and connected to Neon PostgreSQL
@@ -86,3 +78,11 @@ Completed
 - Email/password + GitHub OAuth providers configured
 - `/dashboard` route protected via middleware (`auth()` from NextAuth)
 - Prisma client configured with `prisma.config.ts` and singleton in `src/lib/prisma.ts`
+
+### 2026-05-15 — Seed Data
+
+- Demo user `demo@devstash.io` with bcrypt-hashed password (12 rounds)
+- 7 system ItemTypes upserted (snippet, prompt, command, note, file, image, link)
+- 5 collections with 14 items total: React Patterns (3 snippets), AI Workflows (3 prompts), DevOps (1 snippet, 1 command, 2 links), Terminal Commands (4 commands), Design Resources (4 links)
+- All items tagged; real URLs used for link items
+- Script is fully idempotent — safe to re-run via `npm run db:seed`

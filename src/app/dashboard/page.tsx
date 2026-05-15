@@ -1,14 +1,9 @@
 import { Hash, Layers, Star, BookmarkCheck, Pin } from 'lucide-react'
 import { auth } from '@/lib/auth'
 import { getCollectionsForDashboard, getDashboardStats } from '@/lib/db/collections'
-import { mockItems } from '@/lib/mock-data'
+import { getPinnedItems, getRecentItems } from '@/lib/db/items'
 import { CollectionCard } from '@/components/dashboard/CollectionCard'
 import { ItemCard } from '@/components/dashboard/ItemCard'
-
-const pinnedItems = mockItems.filter((i) => i.isPinned)
-const recentItems = [...mockItems]
-  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-  .slice(0, 10)
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -20,9 +15,11 @@ export default async function DashboardPage() {
     userId = demoUser?.id ?? ''
   }
 
-  const [collections, stats] = await Promise.all([
+  const [collections, stats, pinnedItems, recentItems] = await Promise.all([
     getCollectionsForDashboard(userId),
     getDashboardStats(userId),
+    getPinnedItems(userId),
+    getRecentItems(userId),
   ])
 
   const statCards = [
@@ -94,22 +91,24 @@ export default async function DashboardPage() {
       )}
 
       {/* Recent Items */}
-      <section>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-semibold">Recent Items</h2>
-          <a
-            href="/items"
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            View all
-          </a>
-        </div>
-        <div className="space-y-2">
-          {recentItems.map((item) => (
-            <ItemCard key={item.id} item={item} />
-          ))}
-        </div>
-      </section>
+      {recentItems.length > 0 && (
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-semibold">Recent Items</h2>
+            <a
+              href="/items"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              View all
+            </a>
+          </div>
+          <div className="space-y-2">
+            {recentItems.map((item) => (
+              <ItemCard key={item.id} item={item} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   )
 }

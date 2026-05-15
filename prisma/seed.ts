@@ -3,10 +3,9 @@ import { PrismaClient, ContentType } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
 
-const connectionString = process.env.DATABASE_URL!.replace(
-  "&channel_binding=require",
-  ""
-);
+const connectionString = process.env.DATABASE_URL!
+  .replace("&channel_binding=require", "")
+  .replace("sslmode=require", "sslmode=verify-full");
 const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 

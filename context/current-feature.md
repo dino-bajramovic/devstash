@@ -8,21 +8,19 @@ Completed
 
 ## Goals
 
-- Create `src/lib/db/collections.ts` with data fetching functions
-- Fetch collections directly in server component (replace mock data)
-- Collection card border color derived from most-used content type in that collection
-- Show small icons of all types present in each collection
+- Create `src/lib/db/items.ts` with data fetching functions
+- Fetch pinned and recent items directly in server component (replace mock data)
+- Item card icon/border derived from item type
+- If no pinned items, hide that section entirely
 - Keep the current design intact
-- Update collection stats display to reflect real data
 
 ## Specs
 
-@features/dashboard-collections-spec.md
+@context/features/dashboard-items-spec.md
 
 ## Notes
 
-- Do not add items underneath cards yet — that comes later
-- Replace `src/lib/mock-data.ts` usage in main area only (collections section)
+- Replace `src/lib/mock-data.ts` usage for items section only
 - Fetch data with Prisma directly in server components — no client-side fetching
 
 ## History
@@ -94,3 +92,12 @@ Completed
 - All 4 stats cards (total items, collections, favorites) now pull from DB
 - Dev fallback: if no auth session, load data for `demo@devstash.io`
 - `AUTH_SECRET` generated and set in `.env`
+
+### 2026-05-15 — Dashboard Items — Real Data
+
+- Created `src/lib/db/items.ts` with `getPinnedItems` and `getRecentItems`
+- Items fetched from Neon DB via Prisma with nested itemType and tags includes
+- `ItemCard` updated to accept real `itemType` object directly (removed mock data dependency)
+- Pinned section hidden when no pinned items exist
+- Recent items section hidden when no items exist
+- Fixed SSL warning in `prisma.ts` and `seed.ts` (`sslmode=require` → `sslmode=verify-full`)

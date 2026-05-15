@@ -9,7 +9,7 @@ import {
   Link as LinkIcon,
   type LucideIcon,
 } from 'lucide-react'
-import { mockItemTypes } from '@/lib/mock-data'
+import type { ItemForDashboard } from '@/lib/db/items'
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Code,
@@ -21,31 +21,20 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Link: LinkIcon,
 }
 
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-interface Item {
-  id: string
-  title: string
-  description?: string | null
-  isFavorite: boolean
-  itemTypeId: string
-  tags: string[]
-  createdAt: string
-}
-
-export function ItemCard({ item }: { item: Item }) {
-  const itemType = mockItemTypes.find((t) => t.id === item.itemTypeId)
-  const Icon = itemType ? (ICON_MAP[itemType.icon] ?? File) : File
+export function ItemCard({ item }: { item: ItemForDashboard }) {
+  const Icon = ICON_MAP[item.itemType.icon] ?? File
 
   return (
     <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-4 hover:bg-card/60 transition-colors cursor-pointer">
       <div
         className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full mt-0.5"
-        style={{ backgroundColor: itemType ? `${itemType.color}20` : undefined }}
+        style={{ backgroundColor: `${item.itemType.color}20` }}
       >
-        <Icon className="h-4 w-4" style={{ color: itemType?.color }} />
+        <Icon className="h-4 w-4" style={{ color: item.itemType.color }} />
       </div>
 
       <div className="flex-1 min-w-0">

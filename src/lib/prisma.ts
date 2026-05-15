@@ -4,7 +4,9 @@ import { PrismaPg } from "@prisma/adapter-pg";
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
 function createPrismaClient() {
-  const connectionString = process.env.DATABASE_URL!.replace("&channel_binding=require", "");
+  const connectionString = process.env.DATABASE_URL!
+    .replace("&channel_binding=require", "")
+    .replace("sslmode=require", "sslmode=verify-full");
   const adapter = new PrismaPg({ connectionString });
   return new PrismaClient({ adapter });
 }

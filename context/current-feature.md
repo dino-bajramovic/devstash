@@ -1,22 +1,32 @@
 ## Current feature
 
-None — ready for next feature
+Seed Data — populate the database with sample data for development and demos
 
 ## Status
 
-Completed
+In Progress
 
 ## Goals
 
+- Override the existing `prisma/seed.ts` with full sample data per the seed spec
+- Create a demo user (`demo@devstash.io`) with a hashed password
+- Seed all 7 system `ItemType` records (snippet, prompt, command, note, file, image, link)
+- Create 5 collections with realistic items: React Patterns, AI Workflows, DevOps, Terminal Commands, Design Resources
+- All items should have appropriate tags, content, and metadata
+
 ## Specs
 
-@features/database-spec.md
+@features/seed-spec.md
 
 ## Notes
 
 - NextAuth v5 is still in beta — use `next-auth@beta`
 - Never use `prisma db push` — always migrations
 - Keep all features unlocked during dev (isPro gating infrastructure only)
+- Hash demo user password with `bcryptjs`, 12 rounds
+- Use real URLs for link items (DevOps and Design Resources collections)
+- The seed script must be fully idempotent — safe to run multiple times (upsert or delete-then-recreate)
+- Override whatever is currently in `prisma/seed.ts` completely
 
 ## History
 

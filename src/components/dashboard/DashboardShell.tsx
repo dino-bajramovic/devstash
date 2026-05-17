@@ -5,8 +5,14 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Package, Plus, Search } from 'lucide-react'
 import { Sidebar } from './Sidebar'
+import type { SidebarData } from '@/lib/db/collections'
 
-export function DashboardShell({ children }: { children: React.ReactNode }) {
+interface DashboardShellProps {
+  children: React.ReactNode
+  sidebarData: SidebarData
+}
+
+export function DashboardShell({ children, sidebarData }: DashboardShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -49,6 +55,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           onToggleCollapse={() => setSidebarCollapsed((prev) => !prev)}
           mobileOpen={mobileOpen}
           onMobileClose={() => setMobileOpen(false)}
+          data={sidebarData}
         />
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>

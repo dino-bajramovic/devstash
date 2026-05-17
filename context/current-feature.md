@@ -1,6 +1,6 @@
 ## Current feature
 
-None — ready for next feature
+Dashboard Stats & Sidebar — Real Data
 
 ## Status
 
@@ -8,19 +8,19 @@ Completed
 
 ## Goals
 
-- Create `src/lib/db/items.ts` with data fetching functions
-- Fetch pinned and recent items directly in server component (replace mock data)
-- Item card icon/border derived from item type
-- If no pinned items, hide that section entirely
-- Keep the current design intact
+- Display stats in the main area from database data (keep current design/layout)
+- Display system item types in sidebar with their icons, linking to `/items/[typename]`
+- Add "View all collections" link under the collections list going to `/collections`
+- Keep star icons for favorite collections; for recents, show a colored circle based on the most-used item type in that collection
+- Add database functions to `src/lib/db/items.ts` as needed
 
 ## Specs
 
-@context/features/dashboard-items-spec.md
+@context/features/stats-sidebar-spec.md
 
 ## Notes
 
-- Replace `src/lib/mock-data.ts` usage for items section only
+- Use `src/lib/db/collections.ts` as reference for new DB functions
 - Fetch data with Prisma directly in server components — no client-side fetching
 
 ## History
@@ -101,3 +101,12 @@ Completed
 - Pinned section hidden when no pinned items exist
 - Recent items section hidden when no items exist
 - Fixed SSL warning in `prisma.ts` and `seed.ts` (`sslmode=require` → `sslmode=verify-full`)
+
+### 2026-05-18 — Dashboard Stats & Sidebar — Real Data
+
+- Added `getSidebarData` to `src/lib/db/collections.ts` — fetches system item types with per-user counts and all collections with dominant type color
+- Dashboard layout (`layout.tsx`) now fetches sidebar data server-side and passes it down via props
+- `DashboardShell` updated to accept and forward `sidebarData` prop to `Sidebar`
+- `Sidebar` replaced all mock data with real DB data: item types with counts linking to `/items/[slug]`, favorite collections with star icons, recent (non-favorite) collections with colored dot based on dominant item type
+- Added "View all collections" link at the bottom of the collections section pointing to `/collections`
+- Item types ordered: Snippet → Prompt → Command → Note → File → Image → Link

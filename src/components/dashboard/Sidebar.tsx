@@ -18,8 +18,9 @@ import {
   PanelLeft,
   type LucideIcon,
 } from 'lucide-react'
-import { mockItemTypes, mockCollections, mockUser } from '@/lib/mock-data'
+import { mockUser } from '@/lib/mock-data'
 import { cn } from '@/lib/utils'
+import type { SidebarData } from '@/lib/db/collections'
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Code,
@@ -40,15 +41,15 @@ interface SidebarProps {
   onToggleCollapse: () => void
   mobileOpen: boolean
   onMobileClose: () => void
+  data: SidebarData
 }
 
-export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose }: SidebarProps) {
+export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose, data }: SidebarProps) {
   const pathname = usePathname()
   const [typesOpen, setTypesOpen] = useState(true)
   const [collectionsOpen, setCollectionsOpen] = useState(true)
 
-  const favoriteCollections = mockCollections.filter((c) => c.isFavorite)
-  const otherCollections = mockCollections.filter((c) => !c.isFavorite)
+  const { itemTypes, favoriteCollections, recentCollections } = data
 
   const initials = mockUser.name
     .split(' ')
@@ -99,7 +100,7 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
 
           {typesOpen && (
             <nav className="mt-0.5 space-y-0.5">
-              {mockItemTypes.map((type) => {
+              {itemTypes.map((type) => {
                 const Icon = ICON_MAP[type.icon] ?? File
                 const slug = getTypeSlug(type.name)
                 const href = `/items/${slug}`
@@ -199,14 +200,14 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
                 </>
               )}
 
-              {/* All Collections subsection */}
-              {otherCollections.length > 0 && (
+              {/* Recent collections subsection */}
+              {recentCollections.length > 0 && (
                 <>
                   <p className="mt-3 px-2 pb-1 text-[10px] font-semibold uppercase tracking-widest text-sidebar-foreground/35">
-                    All Collections
+                    Recent
                   </p>
                   <nav className="space-y-0.5">
-                    {otherCollections.map((col) => {
+                    {recentCollections.map((col) => {
                       const href = `/collections/${col.id}`
                       const isActive = pathname === href
                       return (
@@ -221,14 +222,25 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
                               : 'text-sidebar-foreground/80'
                           )}
                         >
+                          <span
+                            className="h-2.5 w-2.5 rounded-full shrink-0"
+                            style={{ backgroundColor: col.dominantType?.color ?? '#6b7280' }}
+                          />
                           <span className="flex-1 truncate">{col.name}</span>
-                          <span className="text-xs text-sidebar-foreground/40">{col.itemCount}</span>
                         </Link>
                       )
                     })}
                   </nav>
                 </>
               )}
+
+              {/* View all collections link */}
+              <Link
+                href="/collections"
+                className="mt-3 flex items-center px-2 py-1.5 text-xs text-sidebar-foreground/40 hover:text-sidebar-foreground transition-colors"
+              >
+                View all collections
+              </Link>
             </>
           )}
         </div>

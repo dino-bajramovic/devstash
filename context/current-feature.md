@@ -1,27 +1,10 @@
 ## Current feature
 
-Dashboard Stats & Sidebar — Real Data
-
 ## Status
-
-Completed
 
 ## Goals
 
-- Display stats in the main area from database data (keep current design/layout)
-- Display system item types in sidebar with their icons, linking to `/items/[typename]`
-- Add "View all collections" link under the collections list going to `/collections`
-- Keep star icons for favorite collections; for recents, show a colored circle based on the most-used item type in that collection
-- Add database functions to `src/lib/db/items.ts` as needed
-
-## Specs
-
-@context/features/stats-sidebar-spec.md
-
 ## Notes
-
-- Use `src/lib/db/collections.ts` as reference for new DB functions
-- Fetch data with Prisma directly in server components — no client-side fetching
 
 ## History
 
@@ -110,3 +93,9 @@ Completed
 - `Sidebar` replaced all mock data with real DB data: item types with counts linking to `/items/[slug]`, favorite collections with star icons, recent (non-favorite) collections with colored dot based on dominant item type
 - Added "View all collections" link at the bottom of the collections section pointing to `/collections`
 - Item types ordered: Snippet → Prompt → Command → Note → File → Image → Link
+
+### 2026-05-20 — Add PRO Badge to Sidebar
+
+- Installed shadcn `Badge` component (`src/components/ui/badge.tsx`)
+- Added a subtle amber PRO badge next to the File and Image item types in the sidebar types list
+- Badge is hidden in collapsed sidebar mode; only visible in full-width mode

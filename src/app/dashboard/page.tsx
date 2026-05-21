@@ -1,19 +1,12 @@
 import { Hash, Layers, Star, BookmarkCheck, Pin } from 'lucide-react'
-import { auth } from '@/lib/auth'
+import { getUserIdOrDemo } from '@/lib/auth'
 import { getCollectionsForDashboard, getDashboardStats } from '@/lib/db/collections'
 import { getPinnedItems, getRecentItems } from '@/lib/db/items'
 import { CollectionCard } from '@/components/dashboard/CollectionCard'
 import { ItemCard } from '@/components/dashboard/ItemCard'
 
 export default async function DashboardPage() {
-  const session = await auth()
-  let userId = session?.user?.id ?? ''
-
-  if (!userId) {
-    const { prisma } = await import('@/lib/prisma')
-    const demoUser = await prisma.user.findUnique({ where: { email: 'demo@devstash.io' }, select: { id: true } })
-    userId = demoUser?.id ?? ''
-  }
+  const userId = await getUserIdOrDemo()
 
   const [collections, stats, pinnedItems, recentItems] = await Promise.all([
     getCollectionsForDashboard(userId),

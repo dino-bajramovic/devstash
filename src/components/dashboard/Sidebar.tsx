@@ -129,7 +129,7 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
                     {!collapsed && (
                       <>
                         <span className="flex-1 truncate">{type.name}</span>
-                        {(type.name === 'File' || type.name === 'Image') && (
+                        {(type.name.toLowerCase() === 'file' || type.name.toLowerCase() === 'image') && (
                           <Badge className="h-4 px-1 text-[10px] font-semibold bg-amber-500/15 text-amber-400 hover:bg-amber-500/15 border-0">
                             PRO
                           </Badge>

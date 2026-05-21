@@ -99,3 +99,9 @@
 - Installed shadcn `Badge` component (`src/components/ui/badge.tsx`)
 - Added a subtle amber PRO badge next to the File and Image item types in the sidebar types list
 - Badge is hidden in collapsed sidebar mode; only visible in full-width mode
+
+### 2026-05-21 — Code Audit Quick Wins
+
+- Replaced hardcoded personal email in `src/lib/mock-data.ts` with `demo@devstash.io` placeholder
+- Extracted duplicate demo-user fallback into `getUserIdOrDemo()` in `src/lib/auth.ts`
+- `dashboard/page.tsx` and `dashboard/layout.tsx` now use the shared helper

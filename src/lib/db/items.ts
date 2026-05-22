@@ -1,35 +1,35 @@
-import { prisma } from '@/lib/prisma'
+import { prisma } from "@/lib/prisma";
 
 export type ItemForDashboard = {
-  id: string
-  title: string
-  description: string | null
-  isFavorite: boolean
-  isPinned: boolean
-  createdAt: Date
+  id: string;
+  title: string;
+  description: string | null;
+  isFavorite: boolean;
+  isPinned: boolean;
+  createdAt: Date;
   itemType: {
-    id: string
-    name: string
-    icon: string
-    color: string
-  }
-  tags: string[]
-}
+    id: string;
+    name: string;
+    icon: string;
+    color: string;
+  };
+  tags: string[];
+};
 
 const itemInclude = {
   itemType: true,
   tags: { include: { tag: true } },
-} as const
+} as const;
 
 function mapItem(item: {
-  id: string
-  title: string
-  description: string | null
-  isFavorite: boolean
-  isPinned: boolean
-  createdAt: Date
-  itemType: { id: string; name: string; icon: string; color: string }
-  tags: { tag: { name: string } }[]
+  id: string;
+  title: string;
+  description: string | null;
+  isFavorite: boolean;
+  isPinned: boolean;
+  createdAt: Date;
+  itemType: { id: string; name: string; icon: string; color: string };
+  tags: { tag: { name: string } }[];
 }): ItemForDashboard {
   return {
     id: item.id,
@@ -40,24 +40,28 @@ function mapItem(item: {
     createdAt: item.createdAt,
     itemType: item.itemType,
     tags: item.tags.map((t) => t.tag.name),
-  }
+  };
 }
 
-export async function getPinnedItems(userId: string): Promise<ItemForDashboard[]> {
+export async function getPinnedItems(
+  userId: string
+): Promise<ItemForDashboard[]> {
   const items = await prisma.item.findMany({
     where: { userId, isPinned: true },
-    orderBy: { updatedAt: 'desc' },
+    orderBy: { updatedAt: "desc" },
     include: itemInclude,
-  })
-  return items.map(mapItem)
+  });
+  return items.map(mapItem);
 }
 
-export async function getRecentItems(userId: string): Promise<ItemForDashboard[]> {
+export async function getRecentItems(
+  userId: string
+): Promise<ItemForDashboard[]> {
   const items = await prisma.item.findMany({
     where: { userId },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
     take: 10,
     include: itemInclude,
-  })
-  return items.map(mapItem)
+  });
+  return items.map(mapItem);
 }

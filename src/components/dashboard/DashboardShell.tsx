@@ -1,47 +1,54 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Package, Plus, Search } from 'lucide-react'
-import { Sidebar } from './Sidebar'
-import type { SidebarData } from '@/lib/db/collections'
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Package, Plus, Search } from "lucide-react";
+import { Sidebar } from "./Sidebar";
+import type { SidebarData } from "@/lib/db/collections";
 
 interface DashboardShellProps {
-  children: React.ReactNode
-  sidebarData: SidebarData
+  children: React.ReactNode;
+  sidebarData: SidebarData;
 }
 
 export function DashboardShell({ children, sidebarData }: DashboardShellProps) {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex h-screen flex-col bg-background text-foreground overflow-hidden">
+    <div className="bg-background text-foreground flex h-screen flex-col overflow-hidden">
       {/* Top bar */}
-      <header className="flex h-14 shrink-0 items-center border-b border-border px-4">
-        <div className="flex items-center gap-2 shrink-0">
-          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
-            <Package className="h-4 w-4 text-primary-foreground" />
+      <header className="border-border flex h-14 shrink-0 items-center border-b px-4">
+        <div className="flex shrink-0 items-center gap-2">
+          <div className="bg-primary flex h-7 w-7 items-center justify-center rounded-md">
+            <Package className="text-primary-foreground h-4 w-4" />
           </div>
-          <span className="font-semibold text-sm tracking-tight">DevStash</span>
+          <span className="text-sm font-semibold tracking-tight">DevStash</span>
         </div>
 
         <div className="flex flex-1 justify-center px-4">
           <div className="relative w-full max-w-sm">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Search items..." className="pl-9 h-8 bg-muted border-0 text-sm" />
-            <kbd className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground select-none">
+            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+            <Input
+              placeholder="Search items..."
+              className="bg-muted h-8 border-0 pl-9 text-sm"
+            />
+            <kbd className="text-muted-foreground pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-xs select-none">
               ⌘K
             </kbd>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 hidden sm:flex">
+        <div className="flex shrink-0 items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="hidden h-8 gap-1.5 text-xs sm:flex"
+          >
             New Collection
           </Button>
-          <Button size="sm" className="h-8 text-xs gap-1.5">
+          <Button size="sm" className="h-8 gap-1.5 text-xs">
             <Plus className="h-3.5 w-3.5" />
             New Item
           </Button>
@@ -60,5 +67,5 @@ export function DashboardShell({ children, sidebarData }: DashboardShellProps) {
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
     </div>
-  )
+  );
 }

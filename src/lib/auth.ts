@@ -53,12 +53,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 });
 
 export async function getUserIdOrDemo(): Promise<string> {
-  const session = await auth()
-  if (session?.user?.id) return session.user.id
+  const session = await auth();
+  if (session?.user?.id) return session.user.id;
 
   const demoUser = await prisma.user.findUnique({
-    where: { email: 'demo@devstash.io' },
+    where: { email: "demo@devstash.io" },
     select: { id: true },
-  })
-  return demoUser?.id ?? ''
+  });
+  return demoUser?.id ?? "";
 }

@@ -34,30 +34,30 @@ enum ContentType {
 
 ### Models
 
-| Model | Description |
-|-------|-------------|
-| `User` | App user (email/password or OAuth). Owns items, collections, tags, custom types. |
-| `Account` | NextAuth OAuth accounts linked to a User |
-| `Session` | NextAuth sessions |
-| `VerificationToken` | NextAuth email verification |
-| `ItemType` | Defines item categories (system + custom). 7 system types seeded on migration. |
-| `Item` | Core unit — snippet, prompt, command, note, link, file, or image |
-| `Collection` | Groups of items. Items can belong to multiple collections. |
-| `ItemCollection` | Join table: Item ↔ Collection (many-to-many) |
-| `Tag` | User-scoped tags |
-| `ItemTag` | Join table: Item ↔ Tag (many-to-many) |
+| Model               | Description                                                                      |
+| ------------------- | -------------------------------------------------------------------------------- |
+| `User`              | App user (email/password or OAuth). Owns items, collections, tags, custom types. |
+| `Account`           | NextAuth OAuth accounts linked to a User                                         |
+| `Session`           | NextAuth sessions                                                                |
+| `VerificationToken` | NextAuth email verification                                                      |
+| `ItemType`          | Defines item categories (system + custom). 7 system types seeded on migration.   |
+| `Item`              | Core unit — snippet, prompt, command, note, link, file, or image                 |
+| `Collection`        | Groups of items. Items can belong to multiple collections.                       |
+| `ItemCollection`    | Join table: Item ↔ Collection (many-to-many)                                     |
+| `Tag`               | User-scoped tags                                                                 |
+| `ItemTag`           | Join table: Item ↔ Tag (many-to-many)                                            |
 
 ### System ItemTypes (seeded)
 
-| Name | Icon | Color | Storage | Tier |
-|------|------|-------|---------|------|
-| Snippet | `Code` | `#3b82f6` | TEXT | Free |
-| Prompt | `Sparkles` | `#8b5cf6` | TEXT | Free |
-| Command | `Terminal` | `#f97316` | TEXT | Free |
-| Note | `StickyNote` | `#fde047` | TEXT | Free |
-| Link | `Link` | `#10b981` | URL | Free |
-| File | `File` | `#6b7280` | FILE | Pro |
-| Image | `Image` | `#ec4899` | FILE | Pro |
+| Name    | Icon         | Color     | Storage | Tier |
+| ------- | ------------ | --------- | ------- | ---- |
+| Snippet | `Code`       | `#3b82f6` | TEXT    | Free |
+| Prompt  | `Sparkles`   | `#8b5cf6` | TEXT    | Free |
+| Command | `Terminal`   | `#f97316` | TEXT    | Free |
+| Note    | `StickyNote` | `#fde047` | TEXT    | Free |
+| Link    | `Link`       | `#10b981` | URL     | Free |
+| File    | `File`       | `#6b7280` | FILE    | Pro  |
+| Image   | `Image`      | `#ec4899` | FILE    | Pro  |
 
 ## Key Design Decisions
 

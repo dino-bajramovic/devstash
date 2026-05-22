@@ -3,8 +3,8 @@ import { PrismaClient, ContentType } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
 
-const connectionString = process.env.DATABASE_URL!
-  .replace("&channel_binding=require", "")
+const connectionString = process.env
+  .DATABASE_URL!.replace("&channel_binding=require", "")
   .replace("sslmode=require", "sslmode=verify-full");
 const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
@@ -85,7 +85,8 @@ async function main() {
   const reactItems = [
     {
       title: "Custom Hooks — useDebounce & useLocalStorage",
-      description: "Utility hooks for debouncing values and persisting state in localStorage",
+      description:
+        "Utility hooks for debouncing values and persisting state in localStorage",
       content: `import { useState, useEffect } from "react";
 
 export function useDebounce<T>(value: T, delay = 300): T {
@@ -293,7 +294,8 @@ After the refactored code, add a short **Rationale** section (3–5 bullet point
   const dockerSnippet = await prisma.item.create({
     data: {
       title: "Dockerfile — Node.js Production",
-      description: "Multi-stage Docker build for a Next.js app with standalone output",
+      description:
+        "Multi-stage Docker build for a Next.js app with standalone output",
       contentType: ContentType.TEXT,
       content: `FROM node:22-alpine AS base
 
@@ -322,16 +324,25 @@ CMD ["node", "server.js"]`,
       language: "dockerfile",
       userId: user.id,
       itemTypeId: typeMap["snippet"],
-      tags: { create: [await tag("docker"), await tag("devops"), await tag("nextjs")].map((t) => ({ tagId: t.id })) },
+      tags: {
+        create: [
+          await tag("docker"),
+          await tag("devops"),
+          await tag("nextjs"),
+        ].map((t) => ({ tagId: t.id })),
+      },
     },
   });
-  await prisma.itemCollection.create({ data: { itemId: dockerSnippet.id, collectionId: devopsCollection.id } });
+  await prisma.itemCollection.create({
+    data: { itemId: dockerSnippet.id, collectionId: devopsCollection.id },
+  });
 
   // 1 command
   const deployCmd = await prisma.item.create({
     data: {
       title: "Deploy to Production",
-      description: "Full production deployment sequence with migration and health check",
+      description:
+        "Full production deployment sequence with migration and health check",
       contentType: ContentType.TEXT,
       content: `# Pull latest, migrate DB, restart app
 git pull origin main && \\
@@ -341,10 +352,18 @@ git pull origin main && \\
   pm2 logs devstash --lines 20`,
       userId: user.id,
       itemTypeId: typeMap["command"],
-      tags: { create: [await tag("deployment"), await tag("pm2"), await tag("prisma")].map((t) => ({ tagId: t.id })) },
+      tags: {
+        create: [
+          await tag("deployment"),
+          await tag("pm2"),
+          await tag("prisma"),
+        ].map((t) => ({ tagId: t.id })),
+      },
     },
   });
-  await prisma.itemCollection.create({ data: { itemId: deployCmd.id, collectionId: devopsCollection.id } });
+  await prisma.itemCollection.create({
+    data: { itemId: deployCmd.id, collectionId: devopsCollection.id },
+  });
 
   // 2 links
   const devopsLinks = [
@@ -356,7 +375,8 @@ git pull origin main && \\
     },
     {
       title: "Docker Official Documentation",
-      description: "Complete reference for Docker CLI, Compose, and Dockerfile syntax",
+      description:
+        "Complete reference for Docker CLI, Compose, and Dockerfile syntax",
       url: "https://docs.docker.com/reference/",
       tags: ["docker", "containers", "devops"],
     },
@@ -375,7 +395,9 @@ git pull origin main && \\
         tags: { create: tags.map((t) => ({ tagId: t.id })) },
       },
     });
-    await prisma.itemCollection.create({ data: { itemId: created.id, collectionId: devopsCollection.id } });
+    await prisma.itemCollection.create({
+      data: { itemId: created.id, collectionId: devopsCollection.id },
+    });
   }
   console.log("✓ DevOps collection seeded");
 
@@ -398,13 +420,15 @@ git pull origin main && \\
     },
     {
       title: "Docker — Remove All Stopped Containers & Dangling Images",
-      description: "Prune stopped containers, dangling images, and unused networks",
+      description:
+        "Prune stopped containers, dangling images, and unused networks",
       content: `docker system prune -f`,
       tags: ["docker", "cleanup"],
     },
     {
       title: "Process — Find and Kill Port",
-      description: "Kill whatever process is holding a given port (replace 3000)",
+      description:
+        "Kill whatever process is holding a given port (replace 3000)",
       content: `lsof -ti :3000 | xargs kill -9`,
       tags: ["process", "port", "shell"],
     },
@@ -430,7 +454,9 @@ git pull origin main && \\
         tags: { create: tags.map((t) => ({ tagId: t.id })) },
       },
     });
-    await prisma.itemCollection.create({ data: { itemId: created.id, collectionId: terminalCollection.id } });
+    await prisma.itemCollection.create({
+      data: { itemId: created.id, collectionId: terminalCollection.id },
+    });
   }
   console.log("✓ Terminal Commands collection seeded");
 
@@ -447,25 +473,29 @@ git pull origin main && \\
   const designLinks = [
     {
       title: "Tailwind CSS Documentation",
-      description: "Official Tailwind CSS v4 utility-first CSS framework reference",
+      description:
+        "Official Tailwind CSS v4 utility-first CSS framework reference",
       url: "https://tailwindcss.com/docs",
       tags: ["tailwind", "css", "reference"],
     },
     {
       title: "shadcn/ui Components",
-      description: "Beautifully designed components built with Radix UI and Tailwind CSS",
+      description:
+        "Beautifully designed components built with Radix UI and Tailwind CSS",
       url: "https://ui.shadcn.com/docs/components",
       tags: ["shadcn", "components", "ui"],
     },
     {
       title: "Radix UI Primitives",
-      description: "Unstyled, accessible component primitives for design systems",
+      description:
+        "Unstyled, accessible component primitives for design systems",
       url: "https://www.radix-ui.com/primitives/docs/overview/introduction",
       tags: ["radix", "accessibility", "design-system"],
     },
     {
       title: "Lucide Icons",
-      description: "Beautiful & consistent open-source icon set used throughout DevStash",
+      description:
+        "Beautiful & consistent open-source icon set used throughout DevStash",
       url: "https://lucide.dev/icons/",
       tags: ["icons", "lucide", "ui"],
     },
@@ -484,7 +514,9 @@ git pull origin main && \\
         tags: { create: tags.map((t) => ({ tagId: t.id })) },
       },
     });
-    await prisma.itemCollection.create({ data: { itemId: created.id, collectionId: designCollection.id } });
+    await prisma.itemCollection.create({
+      data: { itemId: created.id, collectionId: designCollection.id },
+    });
   }
   console.log("✓ Design Resources collection seeded");
 

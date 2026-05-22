@@ -25,12 +25,12 @@ This causes **context switching**, **lost knowledge**, and **inconsistent workfl
 
 ## 👥 Target Users
 
-| User | Needs |
-|------|-------|
-| **Everyday Developer** | Fast access to snippets, prompts, commands, links |
-| **AI-first Developer** | Save prompts, contexts, workflows, system messages |
-| **Content Creator / Educator** | Store code blocks, explanations, course notes |
-| **Full-stack Builder** | Collect patterns, boilerplates, API examples |
+| User                           | Needs                                              |
+| ------------------------------ | -------------------------------------------------- |
+| **Everyday Developer**         | Fast access to snippets, prompts, commands, links  |
+| **AI-first Developer**         | Save prompts, contexts, workflows, system messages |
+| **Content Creator / Educator** | Store code blocks, explanations, course notes      |
+| **Full-stack Builder**         | Collect patterns, boilerplates, API examples       |
 
 ---
 
@@ -59,15 +59,15 @@ Items are the fundamental unit of DevStash. Each item has a **type** that determ
 
 **System types** (cannot be modified):
 
-| Type | Icon | Color | Storage | Tier |
-|------|------|-------|---------|------|
-| Snippet | `Code` | `#3b82f6` (blue) | text | Free |
-| Prompt | `Sparkles` | `#8b5cf6` (purple) | text | Free |
-| Command | `Terminal` | `#f97316` (orange) | text | Free |
-| Note | `StickyNote` | `#fde047` (yellow) | text | Free |
-| Link | `Link` | `#10b981` (emerald) | url | Free |
-| File | `File` | `#6b7280` (gray) | file | **Pro** |
-| Image | `Image` | `#ec4899` (pink) | file | **Pro** |
+| Type    | Icon         | Color               | Storage | Tier    |
+| ------- | ------------ | ------------------- | ------- | ------- |
+| Snippet | `Code`       | `#3b82f6` (blue)    | text    | Free    |
+| Prompt  | `Sparkles`   | `#8b5cf6` (purple)  | text    | Free    |
+| Command | `Terminal`   | `#f97316` (orange)  | text    | Free    |
+| Note    | `StickyNote` | `#fde047` (yellow)  | text    | Free    |
+| Link    | `Link`       | `#10b981` (emerald) | url     | Free    |
+| File    | `File`       | `#6b7280` (gray)    | file    | **Pro** |
+| Image   | `Image`      | `#ec4899` (pink)    | file    | **Pro** |
 
 Users can create **custom types** later (Pro feature).
 
@@ -78,14 +78,15 @@ Users can create **custom types** later (Pro feature).
 
 Collections group items by topic, project, or workflow.
 
-- Items can belong to **multiple collections** (e.g., a React snippet in both *React Patterns* and *Interview Prep*)
+- Items can belong to **multiple collections** (e.g., a React snippet in both _React Patterns_ and _Interview Prep_)
 - Collections can hold **any item type**
 - Each collection has a `defaultTypeId` used when creating items in an empty collection
 
 **Examples:**
-- *React Patterns* (snippets, notes)
-- *Context Files* (files)
-- *Python Snippets* (snippets)
+
+- _React Patterns_ (snippets, notes)
+- _Context Files_ (files)
+- _Python Snippets_ (snippets)
 
 ### C. Search
 
@@ -294,6 +295,7 @@ enum ContentType {
 ## 🛠️ Tech Stack
 
 ### Framework
+
 - **Next.js 16** / **React 19**
 - SSR pages with dynamic components
 - API routes for backend (items, file uploads, AI calls)
@@ -301,24 +303,30 @@ enum ContentType {
 - **TypeScript** throughout
 
 ### Database & ORM
+
 - **Neon** (cloud Postgres)
 - **Prisma 7** (latest — fetch latest docs when implementing)
 - **Redis** for caching (TBD)
 
 ### Storage
+
 - **Cloudflare R2** for file & image uploads
 
 ### Auth
+
 - **NextAuth v5** (email/password + GitHub OAuth)
 
 ### AI
+
 - **OpenAI** `gpt-5-nano`
 
 ### Styling
+
 - **Tailwind CSS v4**
 - **shadcn/ui** components
 
 ### Payments
+
 - **Stripe** (subscriptions: monthly + annual)
 
 ---
@@ -326,6 +334,7 @@ enum ContentType {
 ## 💰 Monetization (Freemium)
 
 ### Free
+
 - 50 items total
 - 3 collections
 - All system types **except** files & images
@@ -334,10 +343,11 @@ enum ContentType {
 - No AI features
 
 ### Pro — $8/month or $72/year
+
 - ✅ Unlimited items
 - ✅ Unlimited collections
 - ✅ File & image uploads
-- ✅ Custom types *(post-launch)*
+- ✅ Custom types _(post-launch)_
 - ✅ AI auto-tagging
 - ✅ AI code explanation
 - ✅ AI prompt optimizer
@@ -351,6 +361,7 @@ enum ContentType {
 ## 🎨 UI / UX
 
 ### Design Principles
+
 - Modern, minimal, developer-focused
 - **Dark mode by default**, light mode optional
 - Clean typography, generous whitespace
@@ -361,6 +372,7 @@ enum ContentType {
 ### Screenshots
 
 Refer to the screenshots below as a base for the dashboard UI. It does not have to be exact, use it as reference:
+
 - @contect/screenshots/dashboard-ui-main.png
 - @contect/screenshots/dashboard-ui-drawer.png
 
@@ -391,10 +403,12 @@ Refer to the screenshots below as a base for the dashboard UI. It does not have 
 - **Drawer**: individual items open in a quick-access side drawer
 
 ### Responsive
+
 - Desktop-first, mobile-usable
 - Sidebar becomes a drawer on mobile
 
 ### Micro-interactions
+
 - Smooth transitions
 - Hover states on cards
 - Toast notifications for actions
@@ -412,7 +426,7 @@ Refer to the screenshots below as a base for the dashboard UI. It does not have 
 6. **Stripe** — checkout, webhooks, `isPro` toggle
 7. **AI Layer** — OpenAI integration for tags, summaries, code explain, prompt optimizer
 8. **Polish** — import/export, recents, pinning, favorites, micro-interactions
-9. **Custom types** *(post-launch)*
+9. **Custom types** _(post-launch)_
 
 ---
 

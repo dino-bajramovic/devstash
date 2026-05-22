@@ -8,7 +8,7 @@ A developer knowledge hub for snippets, commands, prompts, notes, files, images,
 
 Read the following to get the full context of the project:
 
-- @context/project-overview.md   
+- @context/project-overview.md
 - @context/coding-standards.md
 - @context/ai-interaction.md
 - @context/current-feature.md
@@ -16,6 +16,7 @@ Read the following to get the full context of the project:
 ## Neon MCP
 
 When using any Neon MCP tool, always use:
+
 - **Project ID:** `lingering-pine-29362470` (Devstash)
 - **Branch:** `br-rough-credit-alzbxqew` (development)
 

@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Code,
   Sparkles,
@@ -17,11 +17,11 @@ import {
   Settings,
   PanelLeft,
   type LucideIcon,
-} from 'lucide-react'
-import { mockUser } from '@/lib/mock-data'
-import { cn } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
-import type { SidebarData } from '@/lib/db/collections'
+} from "lucide-react";
+import { mockUser } from "@/lib/mock-data";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import type { SidebarData } from "@/lib/db/collections";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Code,
@@ -31,50 +31,57 @@ const ICON_MAP: Record<string, LucideIcon> = {
   File,
   Image,
   Link: LinkIcon,
-}
+};
 
 function getTypeSlug(name: string) {
-  return name.toLowerCase() + 's'
+  return name.toLowerCase() + "s";
 }
 
 interface SidebarProps {
-  collapsed: boolean
-  onToggleCollapse: () => void
-  mobileOpen: boolean
-  onMobileClose: () => void
-  data: SidebarData
+  collapsed: boolean;
+  onToggleCollapse: () => void;
+  mobileOpen: boolean;
+  onMobileClose: () => void;
+  data: SidebarData;
 }
 
-export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose, data }: SidebarProps) {
-  const pathname = usePathname()
-  const [typesOpen, setTypesOpen] = useState(true)
-  const [collectionsOpen, setCollectionsOpen] = useState(true)
+export function Sidebar({
+  collapsed,
+  onToggleCollapse,
+  mobileOpen,
+  onMobileClose,
+  data,
+}: SidebarProps) {
+  const pathname = usePathname();
+  const [typesOpen, setTypesOpen] = useState(true);
+  const [collectionsOpen, setCollectionsOpen] = useState(true);
 
-  const { itemTypes, favoriteCollections, recentCollections } = data
+  const { itemTypes, favoriteCollections, recentCollections } = data;
 
   const initials = mockUser.name
-    .split(' ')
+    .split(" ")
     .map((n) => n[0])
-    .join('')
-    .toUpperCase()
+    .join("")
+    .toUpperCase();
 
   const sidebarContent = (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="flex h-full flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto py-2">
-
         {/* Sidebar header row */}
         <div className="flex items-center justify-between px-3 pb-1">
           {!collapsed && (
-            <span className="text-xs font-medium text-sidebar-foreground/50">Navigation</span>
+            <span className="text-sidebar-foreground/50 text-xs font-medium">
+              Navigation
+            </span>
           )}
           <button
             onClick={onToggleCollapse}
             className={cn(
-              'flex items-center justify-center h-7 w-7 rounded-md transition-colors',
-              'text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent',
-              collapsed && 'mx-auto'
+              "flex h-7 w-7 items-center justify-center rounded-md transition-colors",
+              "text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent",
+              collapsed && "mx-auto"
             )}
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             <PanelLeft className="h-4 w-4" />
           </button>
@@ -85,16 +92,19 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
           <button
             onClick={() => setTypesOpen((o) => !o)}
             className={cn(
-              'flex w-full items-center justify-between rounded-md px-2 py-1.5 transition-colors',
-              'text-xs font-medium text-sidebar-foreground/50',
-              'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-              collapsed && 'justify-center px-0 w-9 h-9 mx-auto'
+              "flex w-full items-center justify-between rounded-md px-2 py-1.5 transition-colors",
+              "text-sidebar-foreground/50 text-xs font-medium",
+              "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+              collapsed && "mx-auto h-9 w-9 justify-center px-0"
             )}
           >
             {!collapsed && <span>Types</span>}
             {!collapsed && (
               <ChevronDown
-                className={cn('h-3.5 w-3.5 transition-transform duration-150', !typesOpen && '-rotate-90')}
+                className={cn(
+                  "h-3.5 w-3.5 transition-transform duration-150",
+                  !typesOpen && "-rotate-90"
+                )}
               />
             )}
           </button>
@@ -102,21 +112,21 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
           {typesOpen && (
             <nav className="mt-0.5 space-y-0.5">
               {itemTypes.map((type) => {
-                const Icon = ICON_MAP[type.icon] ?? File
-                const slug = getTypeSlug(type.name)
-                const href = `/items/${slug}`
-                const isActive = pathname === href
+                const Icon = ICON_MAP[type.icon] ?? File;
+                const slug = getTypeSlug(type.name);
+                const href = `/items/${slug}`;
+                const isActive = pathname === href;
                 return (
                   <Link
                     key={type.id}
                     href={href}
                     className={cn(
-                      'flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors',
-                      'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+                      "flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors",
+                      "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                       isActive
-                        ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                        : 'text-sidebar-foreground/80',
-                      collapsed && 'justify-center px-0 w-9 h-9 mx-auto'
+                        ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                        : "text-sidebar-foreground/80",
+                      collapsed && "mx-auto h-9 w-9 justify-center px-0"
                     )}
                     title={collapsed ? type.name : undefined}
                   >
@@ -129,16 +139,19 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
                     {!collapsed && (
                       <>
                         <span className="flex-1 truncate">{type.name}</span>
-                        {(type.name.toLowerCase() === 'file' || type.name.toLowerCase() === 'image') && (
-                          <Badge className="h-4 px-1 text-[10px] font-semibold bg-amber-500/15 text-amber-400 hover:bg-amber-500/15 border-0">
+                        {(type.name.toLowerCase() === "file" ||
+                          type.name.toLowerCase() === "image") && (
+                          <Badge className="h-4 border-0 bg-amber-500/15 px-1 text-[10px] font-semibold text-amber-400 hover:bg-amber-500/15">
                             PRO
                           </Badge>
                         )}
-                        <span className="text-xs text-sidebar-foreground/40">{type.count}</span>
+                        <span className="text-sidebar-foreground/40 text-xs">
+                          {type.count}
+                        </span>
                       </>
                     )}
                   </Link>
-                )
+                );
               })}
             </nav>
           )}
@@ -149,16 +162,19 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
           <button
             onClick={() => setCollectionsOpen((o) => !o)}
             className={cn(
-              'flex w-full items-center justify-between rounded-md px-2 py-1.5 transition-colors',
-              'text-xs font-medium text-sidebar-foreground/50',
-              'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-              collapsed && 'justify-center px-0 w-9 h-9 mx-auto'
+              "flex w-full items-center justify-between rounded-md px-2 py-1.5 transition-colors",
+              "text-sidebar-foreground/50 text-xs font-medium",
+              "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+              collapsed && "mx-auto h-9 w-9 justify-center px-0"
             )}
           >
             {!collapsed && <span>Collections</span>}
             {!collapsed && (
               <ChevronDown
-                className={cn('h-3.5 w-3.5 transition-transform duration-150', !collectionsOpen && '-rotate-90')}
+                className={cn(
+                  "h-3.5 w-3.5 transition-transform duration-150",
+                  !collectionsOpen && "-rotate-90"
+                )}
               />
             )}
           </button>
@@ -168,39 +184,39 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
               {/* Favorites subsection */}
               {favoriteCollections.length > 0 && (
                 <>
-                  <p className="mt-2 px-2 pb-1 text-[10px] font-semibold uppercase tracking-widest text-sidebar-foreground/35">
+                  <p className="text-sidebar-foreground/35 mt-2 px-2 pb-1 text-[10px] font-semibold tracking-widest uppercase">
                     Favorites
                   </p>
                   <nav className="space-y-0.5">
                     {favoriteCollections.map((col) => {
-                      const href = `/collections/${col.id}`
-                      const isActive = pathname === href
+                      const href = `/collections/${col.id}`;
+                      const isActive = pathname === href;
                       return (
                         <Link
                           key={col.id}
                           href={href}
                           className={cn(
-                            'group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors',
-                            'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+                            "group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
+                            "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                             isActive
-                              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                              : 'text-sidebar-foreground/80'
+                              ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                              : "text-sidebar-foreground/80"
                           )}
                         >
                           <Star className="h-3.5 w-3.5 shrink-0 fill-amber-400 text-amber-400" />
                           <span className="flex-1 truncate">{col.name}</span>
                           <button
-                            className="opacity-0 group-hover:opacity-100 rounded p-0.5 transition-opacity hover:text-sidebar-foreground"
+                            className="hover:text-sidebar-foreground rounded p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
                             onClick={(e) => {
-                              e.preventDefault()
-                              e.stopPropagation()
+                              e.preventDefault();
+                              e.stopPropagation();
                             }}
                             aria-label="Remove from favorites"
                           >
                             <X className="h-3 w-3" />
                           </button>
                         </Link>
-                      )
+                      );
                     })}
                   </nav>
                 </>
@@ -209,32 +225,35 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
               {/* Recent collections subsection */}
               {recentCollections.length > 0 && (
                 <>
-                  <p className="mt-3 px-2 pb-1 text-[10px] font-semibold uppercase tracking-widest text-sidebar-foreground/35">
+                  <p className="text-sidebar-foreground/35 mt-3 px-2 pb-1 text-[10px] font-semibold tracking-widest uppercase">
                     Recent
                   </p>
                   <nav className="space-y-0.5">
                     {recentCollections.map((col) => {
-                      const href = `/collections/${col.id}`
-                      const isActive = pathname === href
+                      const href = `/collections/${col.id}`;
+                      const isActive = pathname === href;
                       return (
                         <Link
                           key={col.id}
                           href={href}
                           className={cn(
-                            'flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors',
-                            'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+                            "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
+                            "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                             isActive
-                              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                              : 'text-sidebar-foreground/80'
+                              ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                              : "text-sidebar-foreground/80"
                           )}
                         >
                           <span
-                            className="h-2.5 w-2.5 rounded-full shrink-0"
-                            style={{ backgroundColor: col.dominantType?.color ?? '#6b7280' }}
+                            className="h-2.5 w-2.5 shrink-0 rounded-full"
+                            style={{
+                              backgroundColor:
+                                col.dominantType?.color ?? "#6b7280",
+                            }}
                           />
                           <span className="flex-1 truncate">{col.name}</span>
                         </Link>
-                      )
+                      );
                     })}
                   </nav>
                 </>
@@ -243,7 +262,7 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
               {/* View all collections link */}
               <Link
                 href="/collections"
-                className="mt-3 flex items-center px-2 py-1.5 text-xs text-sidebar-foreground/40 hover:text-sidebar-foreground transition-colors"
+                className="text-sidebar-foreground/40 hover:text-sidebar-foreground mt-3 flex items-center px-2 py-1.5 text-xs transition-colors"
               >
                 View all collections
               </Link>
@@ -253,24 +272,28 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
       </div>
 
       {/* User avatar */}
-      <div className="shrink-0 border-t border-sidebar-border p-2">
+      <div className="border-sidebar-border shrink-0 border-t p-2">
         <div
           className={cn(
-            'flex items-center gap-2.5 rounded-md px-2 py-1.5 cursor-pointer transition-colors hover:bg-sidebar-accent',
-            collapsed && 'justify-center px-0'
+            "hover:bg-sidebar-accent flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 transition-colors",
+            collapsed && "justify-center px-0"
           )}
         >
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sidebar-primary text-sidebar-primary-foreground text-xs font-semibold">
+          <div className="bg-sidebar-primary text-sidebar-primary-foreground flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold">
             {initials}
           </div>
           {!collapsed && (
             <>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-sidebar-foreground truncate">{mockUser.name}</p>
-                <p className="text-xs text-sidebar-foreground/50 truncate">{mockUser.email}</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-sidebar-foreground truncate text-sm font-medium">
+                  {mockUser.name}
+                </p>
+                <p className="text-sidebar-foreground/50 truncate text-xs">
+                  {mockUser.email}
+                </p>
               </div>
               <button
-                className="p-1 text-sidebar-foreground/40 hover:text-sidebar-foreground transition-colors"
+                className="text-sidebar-foreground/40 hover:text-sidebar-foreground p-1 transition-colors"
                 aria-label="Settings"
               >
                 <Settings className="h-4 w-4" />
@@ -280,16 +303,16 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
         </div>
       </div>
     </div>
-  )
+  );
 
   return (
     <>
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          'hidden md:flex flex-col bg-sidebar border-r border-sidebar-border',
-          'transition-[width] duration-200 overflow-hidden',
-          collapsed ? 'w-14' : 'w-52'
+          "bg-sidebar border-sidebar-border hidden flex-col border-r md:flex",
+          "overflow-hidden transition-[width] duration-200",
+          collapsed ? "w-14" : "w-52"
         )}
       >
         {sidebarContent}
@@ -303,12 +326,14 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
             onClick={onMobileClose}
             aria-hidden
           />
-          <aside className="fixed left-0 top-0 z-50 flex h-full w-64 flex-col bg-sidebar border-r border-sidebar-border md:hidden">
-            <div className="flex h-14 shrink-0 items-center justify-between px-4 border-b border-sidebar-border">
-              <span className="font-semibold text-sm text-sidebar-foreground">Menu</span>
+          <aside className="bg-sidebar border-sidebar-border fixed top-0 left-0 z-50 flex h-full w-64 flex-col border-r md:hidden">
+            <div className="border-sidebar-border flex h-14 shrink-0 items-center justify-between border-b px-4">
+              <span className="text-sidebar-foreground text-sm font-semibold">
+                Menu
+              </span>
               <button
                 onClick={onMobileClose}
-                className="p-1 text-sidebar-foreground/50 hover:text-sidebar-foreground transition-colors"
+                className="text-sidebar-foreground/50 hover:text-sidebar-foreground p-1 transition-colors"
                 aria-label="Close menu"
               >
                 <X className="h-4 w-4" />
@@ -319,5 +344,5 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
         </>
       )}
     </>
-  )
+  );
 }

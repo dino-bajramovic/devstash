@@ -7,12 +7,23 @@ import { Package, Plus, Search } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 import type { SidebarData } from "@/lib/db/collections";
 
+export interface SidebarUser {
+  name: string | null;
+  email: string | null;
+  image: string | null;
+}
+
 interface DashboardShellProps {
   children: React.ReactNode;
   sidebarData: SidebarData;
+  user: SidebarUser | null;
 }
 
-export function DashboardShell({ children, sidebarData }: DashboardShellProps) {
+export function DashboardShell({
+  children,
+  sidebarData,
+  user,
+}: DashboardShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -63,6 +74,7 @@ export function DashboardShell({ children, sidebarData }: DashboardShellProps) {
           mobileOpen={mobileOpen}
           onMobileClose={() => setMobileOpen(false)}
           data={sidebarData}
+          user={user}
         />
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>

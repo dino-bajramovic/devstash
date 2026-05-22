@@ -1,26 +1,10 @@
-## Current Feature: Auth Setup — NextAuth + GitHub Provider
+## Current Feature
 
 ## Status
 
-In Progress
-
 ## Goals
 
-- Install NextAuth v5 (`next-auth@beta`) and `@auth/prisma-adapter`
-- Set up split auth config pattern for edge compatibility
-- Add GitHub OAuth provider
-- Protect `/dashboard/*` routes using Next.js 16 proxy
-- Redirect unauthenticated users to sign-in
-
 ## Notes
-
-- Use Context7 to verify newest NextAuth config/conventions before implementing
-- Proxy file must be at `src/proxy.ts` (same level as `app/`)
-- Use named export: `export const proxy = auth(...)` — not default export
-- Use `session: { strategy: 'jwt' }` with split config pattern
-- Don't set custom `pages.signIn` — use NextAuth's default page
-- Requires env vars: `AUTH_SECRET`, `AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`
-- Test: go to `/dashboard` → should redirect to sign-in → click GitHub → redirects back to `/dashboard`
 
 ## History
 
@@ -121,3 +105,13 @@ In Progress
 - Replaced hardcoded personal email in `src/lib/mock-data.ts` with `demo@devstash.io` placeholder
 - Extracted duplicate demo-user fallback into `getUserIdOrDemo()` in `src/lib/auth.ts`
 - `dashboard/page.tsx` and `dashboard/layout.tsx` now use the shared helper
+
+### 2026-05-22 — Auth Setup — NextAuth + GitHub Provider
+
+- Created `src/auth.config.ts` — edge-safe config with GitHub provider and JWT/session callbacks
+- Created `src/auth.ts` — full config with PrismaAdapter, Credentials provider (bcrypt), and split config spread
+- Created `src/proxy.ts` — Next.js 16 proxy protecting `/dashboard/*`, redirects unauthenticated users to `/api/auth/signin`
+- Created `src/types/next-auth.d.ts` — extends `Session` and `JWT` types with `id` and `isPro` fields
+- Updated `src/app/api/auth/[...nextauth]/route.ts` to import handlers from `@/auth`
+- Simplified `src/lib/auth.ts` to only export `getUserIdOrDemo()`, importing `auth` from `@/auth`
+- Verified: GitHub OAuth login works end-to-end, `/dashboard` redirects unauthenticated users

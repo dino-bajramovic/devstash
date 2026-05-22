@@ -122,3 +122,13 @@
 - Updated `src/app/api/auth/[...nextauth]/route.ts` to import handlers from `@/auth`
 - Simplified `src/lib/auth.ts` to only export `getUserIdOrDemo()`, importing `auth` from `@/auth`
 - Verified: GitHub OAuth login works end-to-end, `/dashboard` redirects unauthenticated users
+
+### 2026-05-23 — Auth Custom UI — Sign-in & Register Pages
+
+- Created `src/app/(auth)/layout.tsx` — centered dark layout for auth pages
+- Created `src/app/(auth)/sign-in/page.tsx` — custom sign-in with GitHub OAuth button, email/password form, and error display
+- Created `src/app/(auth)/register/page.tsx` — client component, POSTs to `/api/auth/register`, redirects to `/sign-in` on success
+- Updated `src/proxy.ts` — redirects unauthenticated users to `/sign-in` (not NextAuth default `/api/auth/signin`)
+- Updated `src/auth.ts` — added `pages: { signIn: "/sign-in" }` so NextAuth uses custom page
+- Updated `DashboardShell` and `Sidebar` — pass real `SidebarUser` prop (name, email, image) from session
+- Sidebar now shows user's real name/email/avatar and a sign-out dropdown with Profile and Sign out buttons

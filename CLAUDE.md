@@ -13,6 +13,14 @@ Read the following to get the full context of the project:
 - @context/ai-interaction.md
 - @context/current-feature.md
 
+## Neon MCP
+
+When using any Neon MCP tool, always use:
+- **Project ID:** `lingering-pine-29362470` (Devstash)
+- **Branch:** `br-rough-credit-alzbxqew` (development)
+
+**Never touch the production branch** (`br-curly-surf-aleqa1k4`) unless the user explicitly says "production" or "prod".
+
 ## Commands
 
 ```bash

@@ -18,10 +18,11 @@ import {
   PanelLeft,
   type LucideIcon,
 } from "lucide-react";
-import { mockUser } from "@/lib/mock-data";
+import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import type { SidebarData } from "@/lib/db/collections";
+import type { SidebarUser } from "@/components/dashboard/DashboardShell";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Code,
@@ -43,6 +44,7 @@ interface SidebarProps {
   mobileOpen: boolean;
   onMobileClose: () => void;
   data: SidebarData;
+  user: SidebarUser | null;
 }
 
 export function Sidebar({
@@ -51,18 +53,23 @@ export function Sidebar({
   mobileOpen,
   onMobileClose,
   data,
+  user,
 }: SidebarProps) {
   const pathname = usePathname();
   const [typesOpen, setTypesOpen] = useState(true);
   const [collectionsOpen, setCollectionsOpen] = useState(true);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const { itemTypes, favoriteCollections, recentCollections } = data;
 
-  const initials = mockUser.name
+  const displayName = user?.name ?? "Guest";
+  const displayEmail = user?.email ?? "";
+  const initials = displayName
     .split(" ")
-    .map((n) => n[0])
+    .map((n: string) => n[0])
     .join("")
-    .toUpperCase();
+    .toUpperCase()
+    .slice(0, 2);
 
   const sidebarContent = (
     <div className="flex h-full flex-col overflow-hidden">
@@ -272,33 +279,56 @@ export function Sidebar({
       </div>
 
       {/* User avatar */}
-      <div className="border-sidebar-border shrink-0 border-t p-2">
+      <div className="border-sidebar-border relative shrink-0 border-t p-2">
+        {/* Sign-out dropdown */}
+        {userMenuOpen && !collapsed && (
+          <div className="border-border bg-card absolute bottom-full left-2 right-2 mb-1 rounded-lg border shadow-lg">
+            <Link
+              href="/profile"
+              onClick={() => setUserMenuOpen(false)}
+              className="hover:bg-accent text-foreground flex items-center gap-2 rounded-t-lg px-3 py-2 text-sm"
+            >
+              <Settings className="h-3.5 w-3.5" />
+              Profile
+            </Link>
+            <button
+              onClick={() => signOut({ callbackUrl: "/sign-in" })}
+              className="hover:bg-accent text-foreground flex w-full items-center gap-2 rounded-b-lg px-3 py-2 text-sm"
+            >
+              <X className="h-3.5 w-3.5" />
+              Sign out
+            </button>
+          </div>
+        )}
+
         <div
+          onClick={() => setUserMenuOpen((o) => !o)}
           className={cn(
             "hover:bg-sidebar-accent flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 transition-colors",
-            collapsed && "justify-center px-0"
+            collapsed && "mx-auto h-9 w-9 justify-center px-0"
           )}
         >
-          <div className="bg-sidebar-primary text-sidebar-primary-foreground flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold">
-            {initials}
-          </div>
+          {user?.image ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={user.image}
+              alt={displayName}
+              className="h-7 w-7 shrink-0 rounded-full object-cover"
+            />
+          ) : (
+            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold">
+              {initials}
+            </div>
+          )}
           {!collapsed && (
-            <>
-              <div className="min-w-0 flex-1">
-                <p className="text-sidebar-foreground truncate text-sm font-medium">
-                  {mockUser.name}
-                </p>
-                <p className="text-sidebar-foreground/50 truncate text-xs">
-                  {mockUser.email}
-                </p>
-              </div>
-              <button
-                className="text-sidebar-foreground/40 hover:text-sidebar-foreground p-1 transition-colors"
-                aria-label="Settings"
-              >
-                <Settings className="h-4 w-4" />
-              </button>
-            </>
+            <div className="min-w-0 flex-1">
+              <p className="text-sidebar-foreground truncate text-sm font-medium leading-tight">
+                {displayName}
+              </p>
+              <p className="text-sidebar-foreground/50 truncate text-xs leading-none">
+                {displayEmail}
+              </p>
+            </div>
           )}
         </div>
       </div>

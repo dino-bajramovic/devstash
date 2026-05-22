@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { getUserIdOrDemo } from "@/lib/auth";
 import { getSidebarData } from "@/lib/db/collections";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
@@ -7,9 +8,24 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const userId = await getUserIdOrDemo();
+  const [session, userId] = await Promise.all([
+    auth(),
+    getUserIdOrDemo(),
+  ]);
 
   const sidebarData = await getSidebarData(userId);
 
-  return <DashboardShell sidebarData={sidebarData}>{children}</DashboardShell>;
+  const user = session?.user
+    ? {
+        name: session.user.name ?? null,
+        email: session.user.email ?? null,
+        image: session.user.image ?? null,
+      }
+    : null;
+
+  return (
+    <DashboardShell sidebarData={sidebarData} user={user}>
+      {children}
+    </DashboardShell>
+  );
 }

@@ -1,23 +1,10 @@
-## Current Feature: Auth Credentials — Email/Password Provider
+## Current Feature
 
 ## Status
 
-In Progress
-
 ## Goals
 
-- Add Credentials provider placeholder in `auth.config.ts` (edge-safe, `authorize: () => null`)
-- Override Credentials in `auth.ts` with actual bcrypt validation
-- Create registration API route at `POST /api/auth/register` (name, email, password, confirmPassword)
-- Validate passwords match, check user exists, hash with bcryptjs, create user
-
 ## Notes
-
-- `password` field already exists on User model (added in Foundation migration)
-- `bcryptjs` already installed
-- Registration route returns `{ success, error }` JSON pattern
-- Test: curl register → sign in at `/api/auth/signin` → verify redirect to `/dashboard`
-- Verify GitHub OAuth still works after changes
 
 ## History
 
@@ -118,6 +105,13 @@ In Progress
 - Replaced hardcoded personal email in `src/lib/mock-data.ts` with `demo@devstash.io` placeholder
 - Extracted duplicate demo-user fallback into `getUserIdOrDemo()` in `src/lib/auth.ts`
 - `dashboard/page.tsx` and `dashboard/layout.tsx` now use the shared helper
+
+### 2026-05-22 — Auth Credentials — Email/Password Provider
+
+- Added Credentials provider placeholder (`authorize: () => null`) to `src/auth.config.ts` for edge compatibility
+- Updated `src/auth.ts` to filter out placeholder and override with full bcrypt validation
+- Created `POST /api/auth/register` — validates name/email/password/confirmPassword, checks for existing user, hashes with bcryptjs (12 rounds), creates user in DB
+- Returns `{ success, error }` JSON pattern with appropriate HTTP status codes
 
 ### 2026-05-22 — Auth Setup — NextAuth + GitHub Provider
 

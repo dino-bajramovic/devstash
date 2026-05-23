@@ -21,6 +21,7 @@ import {
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { UserAvatar } from "@/components/ui/user-avatar";
 import type { SidebarData } from "@/lib/db/collections";
 import type { SidebarUser } from "@/components/dashboard/DashboardShell";
 
@@ -64,12 +65,6 @@ export function Sidebar({
 
   const displayName = user?.name ?? "Guest";
   const displayEmail = user?.email ?? "";
-  const initials = displayName
-    .split(" ")
-    .map((n: string) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
 
   const sidebarContent = (
     <div className="flex h-full flex-col overflow-hidden">
@@ -308,18 +303,7 @@ export function Sidebar({
             collapsed && "mx-auto h-9 w-9 justify-center px-0"
           )}
         >
-          {user?.image ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={user.image}
-              alt={displayName}
-              className="h-7 w-7 shrink-0 rounded-full object-cover"
-            />
-          ) : (
-            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold">
-              {initials}
-            </div>
-          )}
+          <UserAvatar name={displayName} image={user?.image} />
           {!collapsed && (
             <div className="min-w-0 flex-1">
               <p className="text-sidebar-foreground truncate text-sm font-medium leading-tight">

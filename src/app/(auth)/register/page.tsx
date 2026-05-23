@@ -1,44 +1,50 @@
-"use client";
-
-import { useState } from "react";
+import { redirect } from "next/navigation";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
+import { SubmitButton } from "./submit-button";
 
-export default function RegisterPage() {
-  const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+interface Props {
+  searchParams: Promise<{ error?: string }>;
+}
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+const ERROR_MESSAGES: Record<string, string> = {
+  email_taken: "An account with this email already exists.",
+  password_mismatch: "Passwords do not match.",
+  password_short: "Password must be at least 8 characters.",
+  default: "Something went wrong. Please try again.",
+};
 
-    const formData = new FormData(e.currentTarget);
-    const body = {
-      name: formData.get("name"),
-      email: formData.get("email"),
-      password: formData.get("password"),
-      confirmPassword: formData.get("confirmPassword"),
-    };
+export default async function RegisterPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const error = params.error
+    ? (ERROR_MESSAGES[params.error] ?? ERROR_MESSAGES.default)
+    : null;
 
-    try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json();
-      if (!data.success) {
-        setError(data.error ?? "Registration failed.");
-      } else {
-        router.push("/sign-in?registered=1");
-      }
-    } catch {
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
+  async function register(formData: FormData) {
+    "use server";
+
+    const name = (formData.get("name") as string).trim();
+    const email = (formData.get("email") as string).trim().toLowerCase();
+    const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirmPassword") as string;
+
+    if (password !== confirmPassword) {
+      redirect("/register?error=password_mismatch");
     }
+    if (password.length < 8) {
+      redirect("/register?error=password_short");
+    }
+
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) {
+      redirect("/register?error=email_taken");
+    }
+
+    const hashed = await bcrypt.hash(password, 12);
+    await prisma.user.create({ data: { name, email, password: hashed } });
+
+    redirect("/sign-in?registered=1");
   }
 
   return (
@@ -60,7 +66,7 @@ export default function RegisterPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form action={register} className="space-y-4">
         <div className="space-y-1.5">
           <label htmlFor="name" className="text-foreground text-sm font-medium">
             Name
@@ -76,10 +82,7 @@ export default function RegisterPage() {
         </div>
 
         <div className="space-y-1.5">
-          <label
-            htmlFor="email"
-            className="text-foreground text-sm font-medium"
-          >
+          <label htmlFor="email" className="text-foreground text-sm font-medium">
             Email
           </label>
           <input
@@ -93,10 +96,7 @@ export default function RegisterPage() {
         </div>
 
         <div className="space-y-1.5">
-          <label
-            htmlFor="password"
-            className="text-foreground text-sm font-medium"
-          >
+          <label htmlFor="password" className="text-foreground text-sm font-medium">
             Password
           </label>
           <input
@@ -110,10 +110,7 @@ export default function RegisterPage() {
         </div>
 
         <div className="space-y-1.5">
-          <label
-            htmlFor="confirmPassword"
-            className="text-foreground text-sm font-medium"
-          >
+          <label htmlFor="confirmPassword" className="text-foreground text-sm font-medium">
             Confirm password
           </label>
           <input
@@ -126,13 +123,7 @@ export default function RegisterPage() {
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 w-full rounded-lg px-4 py-2.5 text-sm font-medium transition-colors"
-        >
-          {loading ? "Creating account…" : "Create account"}
-        </button>
+        <SubmitButton />
       </form>
 
       <p className="text-muted-foreground mt-6 text-center text-sm">

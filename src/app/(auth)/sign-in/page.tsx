@@ -5,7 +5,7 @@ import { signIn } from "@/auth";
 
 
 interface Props {
-  searchParams: Promise<{ error?: string; callbackUrl?: string }>;
+  searchParams: Promise<{ error?: string; callbackUrl?: string; registered?: string }>;
 }
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -20,6 +20,7 @@ export default async function SignInPage({ searchParams }: Props) {
   const error = params.error
     ? (ERROR_MESSAGES[params.error] ?? ERROR_MESSAGES.default)
     : null;
+  const registered = params.registered === "1";
 
   return (
     <div className="border-border bg-card w-full max-w-sm rounded-xl border p-8 shadow-lg">
@@ -60,6 +61,13 @@ export default async function SignInPage({ searchParams }: Props) {
         <span className="text-muted-foreground text-xs">or</span>
         <div className="border-border flex-1 border-t" />
       </div>
+
+      {/* Success */}
+      {registered && (
+        <div className="mb-4 rounded-lg bg-emerald-500/10 px-3 py-2.5 text-sm text-emerald-400">
+          Account created — you can now sign in.
+        </div>
+      )}
 
       {/* Error */}
       {error && (

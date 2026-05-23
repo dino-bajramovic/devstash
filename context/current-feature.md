@@ -1,10 +1,26 @@
-## Current Feature
+# Current Feature: Auth UI — Sign In, Register & Sign Out
 
 ## Status
 
+In Progress
+
 ## Goals
 
+- [x] Custom `/sign-in` page with email/password form and GitHub OAuth button
+- [x] Custom `/register` page with name, email, password, confirm password fields
+- [x] Register submits to `/api/auth/register`, redirects to sign-in on success
+- [x] Form validation and error display on both pages
+- [x] Proxy redirects to `/sign-in` (not NextAuth default)
+- [x] Sidebar bottom: avatar (GitHub image or initials fallback)
+- [x] Sidebar bottom: user name and email
+- [x] Sidebar bottom: dropdown on click with Profile and Sign out
+- [ ] Extract reusable `UserAvatar` component (currently inline in Sidebar)
+
 ## Notes
+
+- Most of this feature was implemented in the `feature/auth-custom-ui` branch (merged 2026-05-23)
+- Only remaining item: extract avatar logic into a reusable component per spec
+- Avatar: if `user.image` exists use `<img>`, otherwise show initials (first letter of each word, max 2)
 
 ## History
 

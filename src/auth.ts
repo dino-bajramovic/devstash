@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Credentials from "next-auth/providers/credentials";
+import GitHub from "next-auth/providers/github";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import authConfig from "./auth.config";
@@ -11,9 +12,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   pages: { signIn: "/sign-in" },
   ...authConfig,
   providers: [
-    ...authConfig.providers.filter(
-      (p) => (p as { id?: string }).id !== "credentials"
-    ),
+    GitHub({ allowDangerousEmailAccountLinking: true }),
     Credentials({
       credentials: {
         email: { label: "Email", type: "email" },

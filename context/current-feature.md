@@ -1,23 +1,16 @@
-# Current Feature: Email Verification Toggle
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- [ ] Add `EMAIL_VERIFICATION_ENABLED` env variable (default `true`)
-- [ ] When `false`: register redirects to `/sign-in?registered=1` instead of `/check-email`, skips token + email
-- [ ] When `false`: `signIn` callback in `auth.config.ts` does not block unverified users
-- [ ] When `false`: dashboard layout skips `emailVerified` check
-- [ ] Set `EMAIL_VERIFICATION_ENABLED=false` in `.env` for local dev (until domain is linked)
+<!-- Add goals here -->
 
 ## Notes
 
-- Use `process.env.EMAIL_VERIFICATION_ENABLED !== "false"` as the check — defaults to enabled if var is missing
-- Only 3 places need the check: register action, signIn callback, dashboard layout
-- No schema or migration changes needed
-- When domain is verified on Resend, set `EMAIL_VERIFICATION_ENABLED=true` in both `.env` and Vercel env vars
+<!-- Add notes here -->
 
 ## History
 
@@ -145,6 +138,15 @@ In Progress
 - Updated `src/auth.ts` — added `pages: { signIn: "/sign-in" }` so NextAuth uses custom page
 - Updated `DashboardShell` and `Sidebar` — pass real `SidebarUser` prop (name, email, image) from session
 - Sidebar now shows user's real name/email/avatar and a sign-out dropdown with Profile and Sign out buttons
+
+### 2026-05-24 — Email Verification Toggle
+
+- Added `src/lib/config.ts` with `EMAIL_VERIFICATION_ENABLED` constant
+- When `false`: register skips token/email and redirects to `/sign-in?registered=1`
+- When `false`: `signIn` callback in `auth.config.ts` does not block unverified users
+- When `false`: dashboard layout skips `emailVerified` guard
+- Set `EMAIL_VERIFICATION_ENABLED=false` in `.env` for local dev (no Resend domain yet)
+- Defaults to enabled (`true`) if env var is missing
 
 ### 2026-05-24 — Email Verification on Register
 

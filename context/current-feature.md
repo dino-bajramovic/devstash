@@ -1,27 +1,16 @@
-# Current Feature: Forgot Password
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Add a "Forgot password?" link on the `/sign-in` page
-- Create `/forgot-password` page with an email input form
-- On submit, generate a password-reset token and send a reset email via Resend
-- Reuse the existing `VerificationToken` model — use a prefixed identifier (e.g., `reset:email@example.com`) to distinguish reset tokens from email-verification tokens
-- Create `/reset-password?token=...` page — validates token, shows new-password form, updates `password` in DB, and deletes the token
-- Redirect to `/sign-in?reset=1` on success; show a success banner on the sign-in page
-- Handle expired/invalid tokens gracefully with a clear error message and a "Request new link" option
+<!-- Add goals here -->
 
 ## Notes
 
-- The existing `VerificationToken` model (`identifier`, `token`, `expires`) is already used for email verification. Use `identifier = "reset:<email>"` to avoid collisions.
-- `createVerificationToken` in `src/lib/token.ts` currently deletes by `identifier` before creating — extend or add a separate `createPasswordResetToken` that uses the prefixed identifier.
-- Token expiry: 1 hour (shorter than email-verify 24 h).
-- Only send a reset email if the email exists in the DB — but always show "If that email is registered, we sent a reset link" to avoid user enumeration.
-- Password update must re-hash with bcrypt (12 rounds) and clear the token afterward.
-- `EMAIL_VERIFICATION_ENABLED` toggle does NOT affect forgot-password — reset emails always send.
+<!-- Add notes here -->
 
 ## History
 
@@ -170,3 +159,24 @@ In Progress
 - When `false`: dashboard layout skips `emailVerified` guard
 - Set `EMAIL_VERIFICATION_ENABLED=false` in `.env` for local dev (no Resend domain yet)
 - Defaults to enabled (`true`) if env var is missing
+
+### 2026-05-25 — Forgot Password
+
+- Added `createPasswordResetToken` to `src/lib/token.ts` — uses `reset:<email>` identifier prefix and 1-hour expiry, reuses existing `VerificationToken` model
+- Added `sendPasswordResetEmail` to `src/lib/email.ts` via Resend
+- Created `src/app/(auth)/forgot-password/page.tsx` — email form; always redirects to `?sent=1` (no user enumeration); only sends email if user exists with a password
+- Created `src/app/(auth)/reset-password/page.tsx` — validates token on render, shows new-password form; server action rehashes with bcrypt (12 rounds), deletes token, redirects to `/sign-in?reset=1`
+- Added "Forgot password?" link inline with the Password label on the sign-in form
+- Added "Password updated" success banner on `/sign-in?reset=1`
+- Error cards for invalid, already-used, and expired tokens; expired tokens show "Request new link" button
+
+### 2026-05-25 — Profile Page
+
+- Created `/profile` route protected by middleware (added to proxy matcher)
+- `src/lib/db/profile.ts` — `getProfileUser` (name, email, avatar, hasPassword, createdAt) and `getProfileStats` (total items, total collections, per-type breakdown)
+- `src/actions/profile.ts` — `changePassword` server action (validates current password, bcrypt re-hash) and `deleteAccount` server action (deletes user + cascade, signs out)
+- `src/app/profile/layout.tsx` — wraps with DashboardShell, hard redirects unauthenticated users
+- `src/app/profile/page.tsx` — server component: user info card with avatar/name/email/join date, usage stats with per-type breakdown, conditional account actions
+- `src/app/profile/change-password-form.tsx` — collapsible inline form (hidden for OAuth-only users)
+- `src/app/profile/delete-account-dialog.tsx` — confirmation dialog using Base UI Dialog with `render` prop instead of Radix `asChild`
+- Installed shadcn Dialog component (Base UI backed, not Radix)

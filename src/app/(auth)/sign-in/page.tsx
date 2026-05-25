@@ -5,7 +5,7 @@ import { signIn } from "@/auth";
 
 
 interface Props {
-  searchParams: Promise<{ error?: string; callbackUrl?: string; registered?: string; verified?: string }>;
+  searchParams: Promise<{ error?: string; callbackUrl?: string; registered?: string; verified?: string; reset?: string }>;
 }
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -22,6 +22,7 @@ export default async function SignInPage({ searchParams }: Props) {
     : null;
   const registered = params.registered === "1";
   const verified = params.verified === "1";
+  const reset = params.reset === "1";
 
   return (
     <div className="border-border bg-card w-full max-w-sm rounded-xl border p-8 shadow-lg">
@@ -74,6 +75,11 @@ export default async function SignInPage({ searchParams }: Props) {
           Email verified — you can now sign in.
         </div>
       )}
+      {reset && (
+        <div className="mb-4 rounded-lg bg-emerald-500/10 px-3 py-2.5 text-sm text-emerald-400">
+          Password updated — you can now sign in.
+        </div>
+      )}
 
       {/* Error */}
       {error && (
@@ -121,12 +127,20 @@ export default async function SignInPage({ searchParams }: Props) {
         </div>
 
         <div className="space-y-1.5">
-          <label
-            htmlFor="password"
-            className="text-foreground text-sm font-medium"
-          >
-            Password
-          </label>
+          <div className="flex items-center justify-between">
+            <label
+              htmlFor="password"
+              className="text-foreground text-sm font-medium"
+            >
+              Password
+            </label>
+            <Link
+              href="/forgot-password"
+              className="text-muted-foreground hover:text-foreground text-xs transition-colors"
+            >
+              Forgot password?
+            </Link>
+          </div>
           <input
             id="password"
             name="password"

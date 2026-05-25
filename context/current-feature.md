@@ -1,16 +1,27 @@
-# Current Feature
+# Current Feature: Forgot Password
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- Add goals here -->
+- Add a "Forgot password?" link on the `/sign-in` page
+- Create `/forgot-password` page with an email input form
+- On submit, generate a password-reset token and send a reset email via Resend
+- Reuse the existing `VerificationToken` model — use a prefixed identifier (e.g., `reset:email@example.com`) to distinguish reset tokens from email-verification tokens
+- Create `/reset-password?token=...` page — validates token, shows new-password form, updates `password` in DB, and deletes the token
+- Redirect to `/sign-in?reset=1` on success; show a success banner on the sign-in page
+- Handle expired/invalid tokens gracefully with a clear error message and a "Request new link" option
 
 ## Notes
 
-<!-- Add notes here -->
+- The existing `VerificationToken` model (`identifier`, `token`, `expires`) is already used for email verification. Use `identifier = "reset:<email>"` to avoid collisions.
+- `createVerificationToken` in `src/lib/token.ts` currently deletes by `identifier` before creating — extend or add a separate `createPasswordResetToken` that uses the prefixed identifier.
+- Token expiry: 1 hour (shorter than email-verify 24 h).
+- Only send a reset email if the email exists in the DB — but always show "If that email is registered, we sent a reset link" to avoid user enumeration.
+- Password update must re-hash with bcrypt (12 rounds) and clear the token afterward.
+- `EMAIL_VERIFICATION_ENABLED` toggle does NOT affect forgot-password — reset emails always send.
 
 ## History
 

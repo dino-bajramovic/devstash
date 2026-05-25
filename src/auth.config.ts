@@ -15,7 +15,10 @@ export default {
   ],
   callbacks: {
     signIn({ user, account }) {
-      if (account?.provider === "credentials") {
+      if (
+        process.env.EMAIL_VERIFICATION_ENABLED !== "false" &&
+        account?.provider === "credentials"
+      ) {
         const emailVerified = (user as { emailVerified?: Date | null }).emailVerified;
         if (!emailVerified) return "/check-email";
       }

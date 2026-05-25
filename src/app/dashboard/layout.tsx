@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { getUserIdOrDemo } from "@/lib/auth";
 import { getSidebarData } from "@/lib/db/collections";
 import { prisma } from "@/lib/prisma";
+import { EMAIL_VERIFICATION_ENABLED } from "@/lib/config";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 
 export default async function DashboardLayout({
@@ -15,7 +16,7 @@ export default async function DashboardLayout({
     getUserIdOrDemo(),
   ]);
 
-  if (session?.user?.id) {
+  if (EMAIL_VERIFICATION_ENABLED && session?.user?.id) {
     const dbUser = await prisma.user.findUnique({
       where: { id: session.user.id },
       select: { emailVerified: true, password: true },

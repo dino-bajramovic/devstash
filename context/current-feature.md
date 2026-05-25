@@ -1,16 +1,23 @@
-# Current Feature
+# Current Feature: Email Verification Toggle
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- Add goals here -->
+- [ ] Add `EMAIL_VERIFICATION_ENABLED` env variable (default `true`)
+- [ ] When `false`: register redirects to `/sign-in?registered=1` instead of `/check-email`, skips token + email
+- [ ] When `false`: `signIn` callback in `auth.config.ts` does not block unverified users
+- [ ] When `false`: dashboard layout skips `emailVerified` check
+- [ ] Set `EMAIL_VERIFICATION_ENABLED=false` in `.env` for local dev (until domain is linked)
 
 ## Notes
 
-<!-- Add notes here -->
+- Use `process.env.EMAIL_VERIFICATION_ENABLED !== "false"` as the check — defaults to enabled if var is missing
+- Only 3 places need the check: register action, signIn callback, dashboard layout
+- No schema or migration changes needed
+- When domain is verified on Resend, set `EMAIL_VERIFICATION_ENABLED=true` in both `.env` and Vercel env vars
 
 ## History
 

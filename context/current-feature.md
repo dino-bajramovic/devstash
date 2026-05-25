@@ -1,4 +1,4 @@
-# Current Feature: Forgot Password
+# Current Feature: Profile Page
 
 ## Status
 
@@ -6,22 +6,19 @@ In Progress
 
 ## Goals
 
-- Add a "Forgot password?" link on the `/sign-in` page
-- Create `/forgot-password` page with an email input form
-- On submit, generate a password-reset token and send a reset email via Resend
-- Reuse the existing `VerificationToken` model — use a prefixed identifier (e.g., `reset:email@example.com`) to distinguish reset tokens from email-verification tokens
-- Create `/reset-password?token=...` page — validates token, shows new-password form, updates `password` in DB, and deletes the token
-- Redirect to `/sign-in?reset=1` on success; show a success banner on the sign-in page
-- Handle expired/invalid tokens gracefully with a clear error message and a "Request new link" option
+- Create profile page at `/profile` route (protected, requires auth)
+- Display user info: name, email, avatar (GitHub image or initials fallback), account creation date
+- Show usage stats: total items, total collections, per-type item breakdown (Snippet, Prompt, Command, Note, Link, File, Image)
+- Change password action — email/password users only (hidden for GitHub OAuth users)
+- Delete account action with confirmation dialog to prevent accidental deletion
 
 ## Notes
 
-- The existing `VerificationToken` model (`identifier`, `token`, `expires`) is already used for email verification. Use `identifier = "reset:<email>"` to avoid collisions.
-- `createVerificationToken` in `src/lib/token.ts` currently deletes by `identifier` before creating — extend or add a separate `createPasswordResetToken` that uses the prefixed identifier.
-- Token expiry: 1 hour (shorter than email-verify 24 h).
-- Only send a reset email if the email exists in the DB — but always show "If that email is registered, we sent a reset link" to avoid user enumeration.
-- Password update must re-hash with bcrypt (12 rounds) and clear the token afterward.
-- `EMAIL_VERIFICATION_ENABLED` toggle does NOT affect forgot-password — reset emails always send.
+- Avatar: use `user.image` (GitHub OAuth) if set, otherwise generate initials from name/email — same logic already used in the Sidebar
+- Change password button must only appear when the user has a `password` field set (i.e. not a pure OAuth user)
+- Delete account must use a confirmation dialog before proceeding; deletes the user record (cascade removes items, collections, etc.)
+- Item type breakdown: group items by `itemType.name`, show count per type
+- Follow existing server-component + Prisma data-fetching patterns used in dashboard pages
 
 ## History
 
@@ -170,3 +167,13 @@ In Progress
 - When `false`: dashboard layout skips `emailVerified` guard
 - Set `EMAIL_VERIFICATION_ENABLED=false` in `.env` for local dev (no Resend domain yet)
 - Defaults to enabled (`true`) if env var is missing
+
+### 2026-05-25 — Forgot Password
+
+- Added `createPasswordResetToken` to `src/lib/token.ts` — uses `reset:<email>` identifier prefix and 1-hour expiry, reuses existing `VerificationToken` model
+- Added `sendPasswordResetEmail` to `src/lib/email.ts` via Resend
+- Created `src/app/(auth)/forgot-password/page.tsx` — email form; always redirects to `?sent=1` (no user enumeration); only sends email if user exists with a password
+- Created `src/app/(auth)/reset-password/page.tsx` — validates token on render, shows new-password form; server action rehashes with bcrypt (12 rounds), deletes token, redirects to `/sign-in?reset=1`
+- Added "Forgot password?" link inline with the Password label on the sign-in form
+- Added "Password updated" success banner on `/sign-in?reset=1`
+- Error cards for invalid, already-used, and expired tokens; expired tokens show "Request new link" button

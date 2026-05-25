@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { hashToken } from "@/lib/token";
 import { SubmitButton } from "./submit-button";
 
 interface Props {
@@ -16,14 +17,15 @@ export default async function ResetPasswordPage({ searchParams }: Props) {
     return <ErrorCard message="Invalid reset link." />;
   }
 
-  const record = await prisma.verificationToken.findUnique({ where: { token } });
+  const tokenHash = hashToken(token);
+  const record = await prisma.verificationToken.findUnique({ where: { token: tokenHash } });
 
   if (!record || !record.identifier.startsWith("reset:")) {
     return <ErrorCard message="This reset link is invalid or has already been used." />;
   }
 
   if (record.expires < new Date()) {
-    await prisma.verificationToken.delete({ where: { token } });
+    await prisma.verificationToken.delete({ where: { token: tokenHash } });
     return <ErrorCard message="This reset link has expired." showRequestNew />;
   }
 
@@ -46,7 +48,8 @@ export default async function ResetPasswordPage({ searchParams }: Props) {
     if (password.length < 8)
       redirect(`/reset-password?token=${actionToken}&error=short`);
 
-    const rec = await prisma.verificationToken.findUnique({ where: { token: actionToken } });
+    const actionTokenHash = hashToken(actionToken);
+    const rec = await prisma.verificationToken.findUnique({ where: { token: actionTokenHash } });
     if (!rec || !rec.identifier.startsWith("reset:") || rec.expires < new Date()) {
       redirect("/forgot-password");
     }
@@ -54,7 +57,7 @@ export default async function ResetPasswordPage({ searchParams }: Props) {
     const email = rec.identifier.slice(6);
     const hashed = await bcrypt.hash(password, 12);
     await prisma.user.update({ where: { email }, data: { password: hashed } });
-    await prisma.verificationToken.delete({ where: { token: actionToken } });
+    await prisma.verificationToken.delete({ where: { token: actionTokenHash } });
 
     redirect("/sign-in?reset=1");
   }

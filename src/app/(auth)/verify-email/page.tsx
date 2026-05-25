@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { hashToken } from "@/lib/token";
 
 interface Props {
   searchParams: Promise<{ token?: string }>;
@@ -13,8 +14,10 @@ export default async function VerifyEmailPage({ searchParams }: Props) {
     return <ErrorCard message="Invalid verification link." />;
   }
 
+  const tokenHash = hashToken(token);
+
   const record = await prisma.verificationToken.findUnique({
-    where: { token },
+    where: { token: tokenHash },
   });
 
   if (!record) {
@@ -22,7 +25,7 @@ export default async function VerifyEmailPage({ searchParams }: Props) {
   }
 
   if (record.expires < new Date()) {
-    await prisma.verificationToken.delete({ where: { token } });
+    await prisma.verificationToken.delete({ where: { token: tokenHash } });
     return <ErrorCard message="This verification link has expired." showResend email={record.identifier} />;
   }
 
@@ -30,7 +33,7 @@ export default async function VerifyEmailPage({ searchParams }: Props) {
     where: { email: record.identifier },
     data: { emailVerified: new Date() },
   });
-  await prisma.verificationToken.delete({ where: { token } });
+  await prisma.verificationToken.delete({ where: { token: tokenHash } });
 
   redirect("/sign-in?verified=1");
 }

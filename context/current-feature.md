@@ -1,4 +1,4 @@
-# Current Feature: Auth UI — Sign In, Register & Sign Out
+# Current Feature: Email Verification on Register
 
 ## Status
 
@@ -6,21 +6,22 @@ In Progress
 
 ## Goals
 
-- [x] Custom `/sign-in` page with email/password form and GitHub OAuth button
-- [x] Custom `/register` page with name, email, password, confirm password fields
-- [x] Register submits to `/api/auth/register`, redirects to sign-in on success
-- [x] Form validation and error display on both pages
-- [x] Proxy redirects to `/sign-in` (not NextAuth default)
-- [x] Sidebar bottom: avatar (GitHub image or initials fallback)
-- [x] Sidebar bottom: user name and email
-- [x] Sidebar bottom: dropdown on click with Profile and Sign out
-- [ ] Extract reusable `UserAvatar` component (currently inline in Sidebar)
+- [ ] Install and configure Resend SDK using `RESEND_API_KEY` from `.env`
+- [ ] After registration, generate a secure verification token and store it in `VerificationToken` table
+- [ ] Send verification email via Resend with a link to `/verify-email?token=...`
+- [ ] Create `/verify-email` route that validates the token, marks `emailVerified` on the `User`, and deletes the token
+- [ ] After registration, redirect to a "check your email" page instead of directly to sign-in
+- [ ] Block unverified users from accessing `/dashboard` (redirect to a notice page)
+- [ ] Handle expired tokens — show error and offer re-send option
 
 ## Notes
 
-- Most of this feature was implemented in the `feature/auth-custom-ui` branch (merged 2026-05-23)
-- Only remaining item: extract avatar logic into a reusable component per spec
-- Avatar: if `user.image` exists use `<img>`, otherwise show initials (first letter of each word, max 2)
+- Using Resend (resend.com) for transactional email — `RESEND_API_KEY` already in `.env`
+- `VerificationToken` model already exists in Prisma schema (`identifier`, `token`, `expires`)
+- `emailVerified` field already exists on `User` model
+- Register flow is a Server Action in `src/app/(auth)/register/page.tsx`
+- GitHub OAuth users are auto-verified (skip email verification for them)
+- Token should expire after 24 hours
 
 ## History
 

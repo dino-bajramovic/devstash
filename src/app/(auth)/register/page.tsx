@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { createVerificationToken } from "@/lib/token";
+import { sendVerificationEmail } from "@/lib/email";
 import { SubmitButton } from "./submit-button";
 
 interface Props {
@@ -44,7 +46,13 @@ export default async function RegisterPage({ searchParams }: Props) {
     const hashed = await bcrypt.hash(password, 12);
     await prisma.user.create({ data: { name, email, password: hashed } });
 
-    redirect("/sign-in?registered=1");
+    const token = await createVerificationToken(email);
+    const baseUrl = process.env.AUTH_URL ?? "http://localhost:3000";
+    const verifyUrl = `${baseUrl}/verify-email?token=${token}`;
+
+    await sendVerificationEmail(email, verifyUrl);
+
+    redirect("/check-email");
   }
 
   return (

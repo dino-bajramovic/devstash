@@ -1,6 +1,8 @@
+import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getUserIdOrDemo } from "@/lib/auth";
 import { getSidebarData } from "@/lib/db/collections";
+import { prisma } from "@/lib/prisma";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 
 export default async function DashboardLayout({
@@ -12,6 +14,16 @@ export default async function DashboardLayout({
     auth(),
     getUserIdOrDemo(),
   ]);
+
+  if (session?.user?.id) {
+    const dbUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { emailVerified: true, password: true },
+    });
+    if (dbUser && !dbUser.emailVerified && dbUser.password) {
+      redirect("/check-email");
+    }
+  }
 
   const sidebarData = await getSidebarData(userId);
 

@@ -14,6 +14,13 @@ export default {
     }),
   ],
   callbacks: {
+    signIn({ user, account }) {
+      if (account?.provider === "credentials") {
+        const emailVerified = (user as { emailVerified?: Date | null }).emailVerified;
+        if (!emailVerified) return "/check-email";
+      }
+      return true;
+    },
     jwt({ token, user }) {
       if (user) {
         token.id = user.id;

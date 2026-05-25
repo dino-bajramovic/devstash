@@ -139,15 +139,6 @@ Not Started
 - Updated `DashboardShell` and `Sidebar` — pass real `SidebarUser` prop (name, email, image) from session
 - Sidebar now shows user's real name/email/avatar and a sign-out dropdown with Profile and Sign out buttons
 
-### 2026-05-24 — Email Verification Toggle
-
-- Added `src/lib/config.ts` with `EMAIL_VERIFICATION_ENABLED` constant
-- When `false`: register skips token/email and redirects to `/sign-in?registered=1`
-- When `false`: `signIn` callback in `auth.config.ts` does not block unverified users
-- When `false`: dashboard layout skips `emailVerified` guard
-- Set `EMAIL_VERIFICATION_ENABLED=false` in `.env` for local dev (no Resend domain yet)
-- Defaults to enabled (`true`) if env var is missing
-
 ### 2026-05-24 — Email Verification on Register
 
 - Installed Resend SDK; configured in `src/lib/resend.ts`
@@ -159,3 +150,12 @@ Not Started
 - Added `signIn` callback in `auth.config.ts` — blocks unverified credentials users, redirects to `/check-email`
 - Dashboard layout blocks unverified credentials users as a secondary guard
 - Added `npm run db:clear-users` script to delete all non-demo users
+
+### 2026-05-24 — Email Verification Toggle
+
+- Added `src/lib/config.ts` with `EMAIL_VERIFICATION_ENABLED` constant
+- When `false`: register skips token/email and redirects to `/sign-in?registered=1`
+- When `false`: `signIn` callback in `auth.config.ts` does not block unverified users
+- When `false`: dashboard layout skips `emailVerified` guard
+- Set `EMAIL_VERIFICATION_ENABLED=false` in `.env` for local dev (no Resend domain yet)
+- Defaults to enabled (`true`) if env var is missing

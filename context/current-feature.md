@@ -1,27 +1,16 @@
-# Current Feature: Email Verification on Register
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- [ ] Install and configure Resend SDK using `RESEND_API_KEY` from `.env`
-- [ ] After registration, generate a secure verification token and store it in `VerificationToken` table
-- [ ] Send verification email via Resend with a link to `/verify-email?token=...`
-- [ ] Create `/verify-email` route that validates the token, marks `emailVerified` on the `User`, and deletes the token
-- [ ] After registration, redirect to a "check your email" page instead of directly to sign-in
-- [ ] Block unverified users from accessing `/dashboard` (redirect to a notice page)
-- [ ] Handle expired tokens — show error and offer re-send option
+<!-- Add goals here -->
 
 ## Notes
 
-- Using Resend (resend.com) for transactional email — `RESEND_API_KEY` already in `.env`
-- `VerificationToken` model already exists in Prisma schema (`identifier`, `token`, `expires`)
-- `emailVerified` field already exists on `User` model
-- Register flow is a Server Action in `src/app/(auth)/register/page.tsx`
-- GitHub OAuth users are auto-verified (skip email verification for them)
-- Token should expire after 24 hours
+<!-- Add notes here -->
 
 ## History
 
@@ -149,3 +138,15 @@ In Progress
 - Updated `src/auth.ts` — added `pages: { signIn: "/sign-in" }` so NextAuth uses custom page
 - Updated `DashboardShell` and `Sidebar` — pass real `SidebarUser` prop (name, email, image) from session
 - Sidebar now shows user's real name/email/avatar and a sign-out dropdown with Profile and Sign out buttons
+
+### 2026-05-24 — Email Verification on Register
+
+- Installed Resend SDK; configured in `src/lib/resend.ts`
+- Token generation and DB storage extracted to `src/lib/token.ts` (`createVerificationToken`)
+- Verification email sending in `src/lib/email.ts` (`sendVerificationEmail`) using `onboarding@resend.dev` fallback
+- Register flow now generates a token, sends email, and redirects to `/check-email` instead of `/sign-in`
+- Created `src/app/(auth)/check-email/page.tsx` — "check your email" notice page
+- Created `src/app/(auth)/verify-email/page.tsx` — validates token, sets `emailVerified`, redirects to `/sign-in?verified=1`; handles expired tokens with resend option
+- Added `signIn` callback in `auth.config.ts` — blocks unverified credentials users, redirects to `/check-email`
+- Dashboard layout blocks unverified credentials users as a secondary guard
+- Added `npm run db:clear-users` script to delete all non-demo users

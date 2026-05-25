@@ -1,24 +1,16 @@
-# Current Feature: Profile Page
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Create profile page at `/profile` route (protected, requires auth)
-- Display user info: name, email, avatar (GitHub image or initials fallback), account creation date
-- Show usage stats: total items, total collections, per-type item breakdown (Snippet, Prompt, Command, Note, Link, File, Image)
-- Change password action — email/password users only (hidden for GitHub OAuth users)
-- Delete account action with confirmation dialog to prevent accidental deletion
+<!-- Add goals here -->
 
 ## Notes
 
-- Avatar: use `user.image` (GitHub OAuth) if set, otherwise generate initials from name/email — same logic already used in the Sidebar
-- Change password button must only appear when the user has a `password` field set (i.e. not a pure OAuth user)
-- Delete account must use a confirmation dialog before proceeding; deletes the user record (cascade removes items, collections, etc.)
-- Item type breakdown: group items by `itemType.name`, show count per type
-- Follow existing server-component + Prisma data-fetching patterns used in dashboard pages
+<!-- Add notes here -->
 
 ## History
 
@@ -177,3 +169,14 @@ In Progress
 - Added "Forgot password?" link inline with the Password label on the sign-in form
 - Added "Password updated" success banner on `/sign-in?reset=1`
 - Error cards for invalid, already-used, and expired tokens; expired tokens show "Request new link" button
+
+### 2026-05-25 — Profile Page
+
+- Created `/profile` route protected by middleware (added to proxy matcher)
+- `src/lib/db/profile.ts` — `getProfileUser` (name, email, avatar, hasPassword, createdAt) and `getProfileStats` (total items, total collections, per-type breakdown)
+- `src/actions/profile.ts` — `changePassword` server action (validates current password, bcrypt re-hash) and `deleteAccount` server action (deletes user + cascade, signs out)
+- `src/app/profile/layout.tsx` — wraps with DashboardShell, hard redirects unauthenticated users
+- `src/app/profile/page.tsx` — server component: user info card with avatar/name/email/join date, usage stats with per-type breakdown, conditional account actions
+- `src/app/profile/change-password-form.tsx` — collapsible inline form (hidden for OAuth-only users)
+- `src/app/profile/delete-account-dialog.tsx` — confirmation dialog using Base UI Dialog with `render` prop instead of Radix `asChild`
+- Installed shadcn Dialog component (Base UI backed, not Radix)

@@ -1,61 +1,12 @@
-import { redirect } from "next/navigation";
+"use client";
+
+import { useActionState } from "react";
 import Link from "next/link";
-import bcrypt from "bcryptjs";
-import { prisma } from "@/lib/prisma";
-import { createVerificationToken } from "@/lib/token";
-import { sendVerificationEmail } from "@/lib/email";
-import { EMAIL_VERIFICATION_ENABLED } from "@/lib/config";
+import { registerAction } from "./actions";
 import { SubmitButton } from "./submit-button";
 
-interface Props {
-  searchParams: Promise<{ error?: string }>;
-}
-
-const ERROR_MESSAGES: Record<string, string> = {
-  email_taken: "An account with this email already exists.",
-  password_mismatch: "Passwords do not match.",
-  password_short: "Password must be at least 8 characters.",
-  default: "Something went wrong. Please try again.",
-};
-
-export default async function RegisterPage({ searchParams }: Props) {
-  const params = await searchParams;
-  const error = params.error
-    ? (ERROR_MESSAGES[params.error] ?? ERROR_MESSAGES.default)
-    : null;
-
-  async function register(formData: FormData) {
-    "use server";
-
-    const name = (formData.get("name") as string).trim();
-    const email = (formData.get("email") as string).trim().toLowerCase();
-    const password = formData.get("password") as string;
-    const confirmPassword = formData.get("confirmPassword") as string;
-
-    if (password !== confirmPassword) {
-      redirect("/register?error=password_mismatch");
-    }
-    if (password.length < 8) {
-      redirect("/register?error=password_short");
-    }
-
-    const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) {
-      redirect("/register?error=email_taken");
-    }
-
-    const hashed = await bcrypt.hash(password, 12);
-    await prisma.user.create({ data: { name, email, password: hashed } });
-
-    if (EMAIL_VERIFICATION_ENABLED) {
-      const token = await createVerificationToken(email);
-      const baseUrl = process.env.AUTH_URL ?? "http://localhost:3000";
-      await sendVerificationEmail(email, `${baseUrl}/verify-email?token=${token}`);
-      redirect("/check-email");
-    }
-
-    redirect("/sign-in?registered=1");
-  }
+export default function RegisterPage() {
+  const [state, action] = useActionState(registerAction, {});
 
   return (
     <div className="border-border bg-card w-full max-w-sm rounded-xl border p-8 shadow-lg">
@@ -70,13 +21,13 @@ export default async function RegisterPage({ searchParams }: Props) {
         <p className="text-muted-foreground text-sm">Create your account</p>
       </div>
 
-      {error && (
+      {state.error && (
         <div className="bg-destructive/10 text-destructive mb-4 rounded-lg px-3 py-2.5 text-sm">
-          {error}
+          {state.error}
         </div>
       )}
 
-      <form action={register} className="space-y-4">
+      <form action={action} className="space-y-4">
         <div className="space-y-1.5">
           <label htmlFor="name" className="text-foreground text-sm font-medium">
             Name
@@ -87,6 +38,7 @@ export default async function RegisterPage({ searchParams }: Props) {
             type="text"
             required
             placeholder="Your name"
+            defaultValue={state.values?.name}
             className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2"
           />
         </div>
@@ -101,6 +53,7 @@ export default async function RegisterPage({ searchParams }: Props) {
             type="email"
             required
             placeholder="you@example.com"
+            defaultValue={state.values?.email}
             className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2"
           />
         </div>

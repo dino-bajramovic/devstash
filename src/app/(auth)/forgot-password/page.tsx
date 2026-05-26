@@ -1,18 +1,12 @@
-import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
-import { createPasswordResetToken } from "@/lib/token";
-import { sendPasswordResetEmail } from "@/lib/email";
-import { rateLimitForgotPassword, getIPFromHeaders } from "@/lib/rate-limit";
-import { SubmitButton } from "./submit-button";
+import { ForgotPasswordForm } from "./forgot-password-form";
 
 interface Props {
-  searchParams: Promise<{ sent?: string; error?: string }>;
+  searchParams: Promise<{ sent?: string }>;
 }
 
 export default async function ForgotPasswordPage({ searchParams }: Props) {
-  const { sent, error } = await searchParams;
+  const { sent } = await searchParams;
 
   if (sent === "1") {
     return (
@@ -27,33 +21,11 @@ export default async function ForgotPasswordPage({ searchParams }: Props) {
         <p className="text-muted-foreground mb-6 text-sm">
           If that email is registered, we&apos;ve sent a password reset link. Check your inbox.
         </p>
-        <Link
-          href="/sign-in"
-          className="text-foreground text-sm underline underline-offset-4"
-        >
+        <Link href="/sign-in" className="text-foreground text-sm underline underline-offset-4">
           Back to sign in
         </Link>
       </div>
     );
-  }
-
-  async function requestReset(formData: FormData) {
-    "use server";
-    const hdrs = await headers();
-    const ip = getIPFromHeaders(hdrs);
-    const rl = await rateLimitForgotPassword(ip);
-    if (!rl.success) redirect("/forgot-password?error=rate-limited");
-
-    const email = (formData.get("email") as string).trim().toLowerCase();
-
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (user?.password) {
-      const token = await createPasswordResetToken(email);
-      const baseUrl = process.env.AUTH_URL ?? "http://localhost:3000";
-      await sendPasswordResetEmail(email, `${baseUrl}/reset-password?token=${token}`);
-    }
-
-    redirect("/forgot-password?sent=1");
   }
 
   return (
@@ -71,29 +43,7 @@ export default async function ForgotPasswordPage({ searchParams }: Props) {
         </p>
       </div>
 
-      {error === "rate-limited" && (
-        <div className="bg-destructive/10 text-destructive mb-4 rounded-lg px-3 py-2.5 text-sm">
-          Too many attempts. Please try again later.
-        </div>
-      )}
-
-      <form action={requestReset} className="space-y-4">
-        <div className="space-y-1.5">
-          <label htmlFor="email" className="text-foreground text-sm font-medium">
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            placeholder="you@example.com"
-            className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2"
-          />
-        </div>
-
-        <SubmitButton />
-      </form>
+      <ForgotPasswordForm />
 
       <p className="text-muted-foreground mt-6 text-center text-sm">
         Remember your password?{" "}

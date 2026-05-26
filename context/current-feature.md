@@ -1,16 +1,23 @@
-# Current Feature
+# Current Feature: Fix Form Data Lost on Validation Error
 
 ## Status
 
-Not Started
+Complete
 
 ## Goals
 
-<!-- Add goals here -->
+- Preserve name/email inputs when a validation error occurs on auth forms
+- Stop redirecting on error (which wipes all form fields)
+- Password fields should always clear on error (security — user must re-enter)
+- Apply to all affected forms: register, sign-in, forgot-password
 
 ## Notes
 
-<!-- Add notes here -->
+Used React 19 `useActionState` — returns error state from server action instead
+of redirecting. React automatically resets the form after the action, then
+`defaultValue` on name/email inputs repopulates them from the returned state.
+Server actions extracted to `actions.ts` files (required for `useActionState` in
+client components). Reset-password excluded — password fields should clear.
 
 ## History
 

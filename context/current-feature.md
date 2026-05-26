@@ -1,23 +1,16 @@
-# Current Feature: Fix Form Data Lost on Validation Error
+# Current Feature
 
 ## Status
 
-Complete
+Not Started
 
 ## Goals
 
-- Preserve name/email inputs when a validation error occurs on auth forms
-- Stop redirecting on error (which wipes all form fields)
-- Password fields should always clear on error (security — user must re-enter)
-- Apply to all affected forms: register, sign-in, forgot-password
+<!-- Add goals here -->
 
 ## Notes
 
-Used React 19 `useActionState` — returns error state from server action instead
-of redirecting. React automatically resets the form after the action, then
-`defaultValue` on name/email inputs repopulates them from the returned state.
-Server actions extracted to `actions.ts` files (required for `useActionState` in
-client components). Reset-password excluded — password fields should clear.
+<!-- Add notes here -->
 
 ## History
 
@@ -187,6 +180,17 @@ client components). Reset-password excluded — password fields should clear.
 - `src/app/profile/change-password-form.tsx` — collapsible inline form (hidden for OAuth-only users)
 - `src/app/profile/delete-account-dialog.tsx` — confirmation dialog using Base UI Dialog with `render` prop instead of Radix `asChild`
 - Installed shadcn Dialog component (Base UI backed, not Radix)
+
+### 2026-05-26 — Fix: Form Data Lost on Validation Error
+
+- Replaced redirect-on-error with `useActionState` (React 19) across register, sign-in, and forgot-password forms
+- Server actions extracted to `actions.ts` files per route (required for `useActionState` in client components)
+- `defaultValue={state.values?.name/email}` repopulates non-sensitive fields after React resets the form post-action
+- Password fields intentionally excluded from `defaultValue` (user must always re-enter)
+- Register: `register/actions.ts` + `page.tsx` converted to client component
+- Sign-in: credentials form extracted to `credentials-form.tsx` (client); page stays server component for GitHub OAuth + success banners
+- Forgot password: form extracted to `forgot-password-form.tsx` (client); page stays server component for `?sent=1` view
+- Added `context/fixes/` folder with `form-data-persistence.md` spec
 
 ### 2026-05-26 — Rate Limiting for Auth
 

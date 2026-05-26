@@ -180,3 +180,13 @@ Not Started
 - `src/app/profile/change-password-form.tsx` — collapsible inline form (hidden for OAuth-only users)
 - `src/app/profile/delete-account-dialog.tsx` — confirmation dialog using Base UI Dialog with `render` prop instead of Radix `asChild`
 - Installed shadcn Dialog component (Base UI backed, not Radix)
+
+### 2026-05-26 — Rate Limiting for Auth
+
+- Installed `@upstash/ratelimit` and `@upstash/redis`
+- Created `src/lib/rate-limit.ts` — lazy-initialized Upstash Redis client with 5 named sliding-window limiters; fails open if env vars missing or Redis throws
+- Login: 5 attempts/15 min keyed by IP+email — rate limited inside `authorize()` in `auth.ts` via `RateLimitedError extends CredentialsSignin`; sign-in page forwards `err.code` and maps `"CredentialsSignin:rate-limited"` to a user-friendly message
+- Register: 3 attempts/hour by IP — checked in `/api/auth/register` route handler; returns 429 with `Retry-After` header
+- Forgot password: 3 attempts/hour by IP — checked in server action; redirects to `?error=rate-limited` with inline error display
+- Reset password: 5 attempts/15 min by IP — checked in server action after validation, before DB lookup
+- Resend verification: 3 attempts/15 min by IP+email — checked in inline server action; redirects to `/check-email?resend=limited`

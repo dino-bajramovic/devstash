@@ -5,21 +5,24 @@ import { signIn } from "@/auth";
 
 
 interface Props {
-  searchParams: Promise<{ error?: string; callbackUrl?: string; registered?: string; verified?: string; reset?: string }>;
+  searchParams: Promise<{ error?: string; code?: string; callbackUrl?: string; registered?: string; verified?: string; reset?: string }>;
 }
 
 const ERROR_MESSAGES: Record<string, string> = {
   CredentialsSignin: "Invalid email or password.",
-  OAuthAccountNotLinked:
-    "This email is already linked to another sign-in method.",
+  "CredentialsSignin:rate-limited": "Too many login attempts. Please try again later.",
+  OAuthAccountNotLinked: "This email is already linked to another sign-in method.",
   default: "Something went wrong. Please try again.",
 };
 
 export default async function SignInPage({ searchParams }: Props) {
   const params = await searchParams;
-  const error = params.error
-    ? (ERROR_MESSAGES[params.error] ?? ERROR_MESSAGES.default)
+  const errorKey = params.error
+    ? params.code
+      ? `${params.error}:${params.code}`
+      : params.error
     : null;
+  const error = errorKey ? (ERROR_MESSAGES[errorKey] ?? ERROR_MESSAGES.default) : null;
   const registered = params.registered === "1";
   const verified = params.verified === "1";
   const reset = params.reset === "1";
@@ -102,7 +105,9 @@ export default async function SignInPage({ searchParams }: Props) {
             });
           } catch (err) {
             if (err instanceof AuthError) {
-              redirect(`/sign-in?error=${err.type}`);
+              const code = "code" in err ? String(err.code) : undefined;
+              const base = `/sign-in?error=${err.type}`;
+              redirect(code ? `${base}&code=${code}` : base);
             }
             throw err;
           }

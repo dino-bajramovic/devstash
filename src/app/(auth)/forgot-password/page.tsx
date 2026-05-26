@@ -1,16 +1,18 @@
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { createPasswordResetToken } from "@/lib/token";
 import { sendPasswordResetEmail } from "@/lib/email";
+import { rateLimitForgotPassword, getIPFromHeaders } from "@/lib/rate-limit";
 import { SubmitButton } from "./submit-button";
 
 interface Props {
-  searchParams: Promise<{ sent?: string }>;
+  searchParams: Promise<{ sent?: string; error?: string }>;
 }
 
 export default async function ForgotPasswordPage({ searchParams }: Props) {
-  const { sent } = await searchParams;
+  const { sent, error } = await searchParams;
 
   if (sent === "1") {
     return (
@@ -37,6 +39,11 @@ export default async function ForgotPasswordPage({ searchParams }: Props) {
 
   async function requestReset(formData: FormData) {
     "use server";
+    const hdrs = await headers();
+    const ip = getIPFromHeaders(hdrs);
+    const rl = await rateLimitForgotPassword(ip);
+    if (!rl.success) redirect("/forgot-password?error=rate-limited");
+
     const email = (formData.get("email") as string).trim().toLowerCase();
 
     const user = await prisma.user.findUnique({ where: { email } });
@@ -63,6 +70,12 @@ export default async function ForgotPasswordPage({ searchParams }: Props) {
           Enter your email and we&apos;ll send a reset link.
         </p>
       </div>
+
+      {error === "rate-limited" && (
+        <div className="bg-destructive/10 text-destructive mb-4 rounded-lg px-3 py-2.5 text-sm">
+          Too many attempts. Please try again later.
+        </div>
+      )}
 
       <form action={requestReset} className="space-y-4">
         <div className="space-y-1.5">

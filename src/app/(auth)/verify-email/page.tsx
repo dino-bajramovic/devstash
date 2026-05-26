@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { hashToken } from "@/lib/token";
+import { rateLimitResendVerification, getIPFromHeaders } from "@/lib/rate-limit";
 
 interface Props {
   searchParams: Promise<{ token?: string }>;
@@ -64,9 +65,15 @@ function ErrorCard({
         <form
           action={async () => {
             "use server";
+            const { headers } = await import("next/headers");
             const { redirect: serverRedirect } = await import("next/navigation");
             const { createVerificationToken } = await import("@/lib/token");
             const { sendVerificationEmail } = await import("@/lib/email");
+
+            const hdrs = await headers();
+            const ip = getIPFromHeaders(hdrs);
+            const rl = await rateLimitResendVerification(ip, email);
+            if (!rl.success) serverRedirect("/check-email?resend=limited");
 
             const newToken = await createVerificationToken(email);
             const baseUrl = process.env.AUTH_URL ?? "http://localhost:3000";

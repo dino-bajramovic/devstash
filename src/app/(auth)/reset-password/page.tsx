@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import Link from "next/link";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { hashToken } from "@/lib/token";
+import { rateLimitResetPassword, getIPFromHeaders } from "@/lib/rate-limit";
 import { SubmitButton } from "./submit-button";
 
 interface Props {
@@ -34,7 +36,9 @@ export default async function ResetPasswordPage({ searchParams }: Props) {
       ? "Passwords do not match."
       : params.error === "short"
         ? "Password must be at least 8 characters."
-        : null;
+        : params.error === "rate-limited"
+          ? "Too many attempts. Please try again later."
+          : null;
 
   async function resetPassword(formData: FormData) {
     "use server";
@@ -47,6 +51,11 @@ export default async function ResetPasswordPage({ searchParams }: Props) {
       redirect(`/reset-password?token=${actionToken}&error=mismatch`);
     if (password.length < 8)
       redirect(`/reset-password?token=${actionToken}&error=short`);
+
+    const hdrs = await headers();
+    const ip = getIPFromHeaders(hdrs);
+    const rl = await rateLimitResetPassword(ip);
+    if (!rl.success) redirect(`/reset-password?token=${actionToken}&error=rate-limited`);
 
     const actionTokenHash = hashToken(actionToken);
     const rec = await prisma.verificationToken.findUnique({ where: { token: actionTokenHash } });
